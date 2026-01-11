@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartCart</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;background:#f0f2f5;padding:10px;padding-bottom:80px}
+.container{max-width:600px;margin:0 auto}
+.header{background:linear-gradient(135deg,#2c3e50,#3498db);border-radius:12px;padding:20px;color:#fff;text-align:center;margin-bottom:10px}
+.header h1{font-size:24px;margin-bottom:5px}
+.stats{display:flex;justify-content:center;gap:25px;margin-top:15px}
+.stat{text-align:center}
+.stat-val{font-size:28px;font-weight:700}
+.stat-lbl{font-size:11px;opacity:.8;text-transform:uppercase}
+.store-filter{display:flex;gap:8px;overflow-x:auto;padding:10px 0;margin-bottom:5px}
+.chip{padding:8px 14px;border-radius:20px;font-size:13px;background:#fff;cursor:pointer;border:2px solid #ddd;white-space:nowrap}
+.chip.active{border-color:#3498db;background:#ebf5fb;color:#3498db;font-weight:600}
+.store-section{background:#fff;border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.store-section.hidden{display:none}
+.store-hdr{padding:15px;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #3498db}
+.store-name{font-size:16px;font-weight:700}
+.store-date{font-size:11px;color:#888;margin-top:2px}
+.store-cnt{background:#3498db;color:#fff;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.products{padding:5px 10px 10px}
+.item{padding:12px;border-bottom:1px solid #f0f0f0;display:flex;gap:12px;transition:background .2s}
+.item:last-child{border-bottom:none}
+.item.hidden{display:none}
+.item.checked{background:#e8f5e9}
+.item.stockpile{background:#f0fff4;border-left:3px solid #27ae60;margin-left:-10px;padding-left:19px}
+.checkbox{width:28px;height:28px;border:2px solid #ccc;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;transition:all .2s}
+.checkbox.checked{background:#27ae60;border-color:#27ae60}
+.checkbox.checked::after{content:'✓';color:#fff;font-size:16px;font-weight:700}
+.content{flex:1;min-width:0}
+.main{display:flex;justify-content:space-between;gap:10px}
+.info{flex:1;min-width:0}
+.name{font-weight:600;font-size:14px;color:#333;line-height:1.3}
+.qty{background:#e2e8f0;padding:2px 6px;border-radius:4px;font-size:10px;margin-left:4px;color:#555}
+.brand{font-size:12px;color:#888;margin-top:2px}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.badge{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.badge.disc{background:#fee2e2;color:#dc2626}
+.badge.stock{background:#dbeafe;color:#2563eb}
+.price{text-align:right;flex-shrink:0}
+.cur{font-size:20px;font-weight:700;color:#27ae60}
+.old{font-size:12px;color:#999;text-decoration:line-through}
+.details{margin-top:8px;padding:10px;background:#f8fafc;border-radius:8px}
+.det-title{font-size:10px;color:#64748b;text-transform:uppercase;margin-bottom:5px;font-weight:600}
+.other{display:flex;flex-wrap:wrap;gap:5px}
+.tag{padding:4px 8px;background:#e2e8f0;border-radius:5px;font-size:11px}
+.tag.best{background:#dcfce7;color:#166534;font-weight:600}
+.tip{padding:8px 10px;border-radius:6px;font-size:11px;margin-top:8px;background:#ecfdf5;border-left:3px solid #10b981;color:#065f46}
+.filter-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 15px;box-shadow:0 -2px 10px rgba(0,0,0,.15);display:flex;gap:10px;justify-content:center;z-index:1000}
+.btn{padding:14px 24px;border:none;border-radius:25px;font-size:15px;font-weight:600;cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(.95)}
+.btn.pri{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff}
+.btn.sec{background:#e0e0e0;color:#333}
+.cnt{background:rgba(255,255,255,.3);padding:2px 10px;border-radius:12px;margin-left:8px}
+.footer{text-align:center;padding:20px;color:#9ca3af;font-size:11px}
+</style></head><body><div class="container"><div class="header"><h1>🛒 SmartCart</h1><p>11.01.2026.</p>
+<div class="stats"><div class="stat"><div class="stat-val">75</div><div class="stat-lbl">Proizvoda</div></div>
+<div class="stat"><div class="stat-val" style="color:#2ecc71">67€</div><div class="stat-lbl">Ušteda</div></div>
+<div class="stat"><div class="stat-val">6</div><div class="stat-lbl">📦 Zalihe</div></div></div></div><div class="store-filter"><div class="chip active" data-store="all" onclick="filterStore('all')">Sve</div><div class="chip" data-store="Konzum" onclick="filterStore('Konzum')">Konzum</div><div class="chip" data-store="Spar" onclick="filterStore('Spar')">Spar</div><div class="chip" data-store="Plodine" onclick="filterStore('Plodine')">Plodine</div><div class="chip" data-store="Lidl" onclick="filterStore('Lidl')">Lidl</div><div class="chip" data-store="Kaufland" onclick="filterStore('Kaufland')">Kaufland</div><div class="chip" data-store="KTC" onclick="filterStore('KTC')">KTC</div><div class="chip" data-store="Interspar" onclick="filterStore('Interspar')">Interspar</div><div class="chip" data-store="DM" onclick="filterStore('DM')">DM</div></div><div class="store-section" data-store="Konzum">
+<div class="store-hdr" style="border-color:#e4002b"><div><div class="store-name">🏪 Konzum</div><div class="store-date">📅 05.01.</div></div>
+<div class="store-cnt" style="background:#e4002b">19</div></div>
+<div class="products"><div class="item" data-id="pKon0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Dukat Brzo & Fino Vrhnje za kuhanje<span class="qty"></span></div>
+<div class="brand">Dukat</div><div class="badges"><span class="badge disc">-50%</span></div></div>
+<div class="price"><div class="cur">2.79€</div><div class="old">5.58€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Kidsworld Biskvit Desert<span class="qty"></span></div>
+<div class="brand">Kidsworld</div><div class="badges"><span class="badge disc">-13%</span></div></div>
+<div class="price"><div class="cur">0.35€</div><div class="old">0.40€</div></div></div>
+</div></div><div class="item" data-id="pKon2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">President ribanac<span class="qty"></span></div>
+<div class="brand">President</div><div class="badges"></div></div>
+<div class="price"><div class="cur">1.29€</div></div></div>
+</div></div><div class="item" data-id="pKon3">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Cekin Pileći Fritesi<span class="qty"></span></div>
+<div class="brand">Cekin</div><div class="badges"><span class="badge disc">-15%</span></div></div>
+<div class="price"><div class="cur">4.49€</div><div class="old">5.29€</div></div></div>
+</div></div><div class="item" data-id="pKon4">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Zvijezda Kečap blagi<span class="qty"></span></div>
+<div class="brand">Zvijezda</div><div class="badges"><span class="badge disc">-17%</span></div></div>
+<div class="price"><div class="cur">2.49€</div><div class="old">2.99€</div></div></div>
+</div></div><div class="item" data-id="pKon5">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">E Buono Rajčica pasirana<span class="qty"></span></div>
+<div class="brand">E Buono</div><div class="badges"><span class="badge disc">-25%</span></div></div>
+<div class="price"><div class="cur">0.59€</div><div class="old">0.79€</div></div></div>
+</div></div><div class="item" data-id="pKon6">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">VEGETA MAESTRO PAPRIKA<span class="qty"></span></div>
+<div class="brand">VEGETA</div><div class="badges"><span class="badge disc">-41%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.69€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon7">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Zelenje za juhu<span class="qty"></span></div>
+<div class="brand">Konzum</div><div class="badges"><span class="badge disc">-23%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.29€</div></div></div>
+</div></div><div class="item" data-id="pKon8">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Svježi kupus<span class="qty"></span></div>
+<div class="brand">None</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.39€</div></div></div>
+</div></div><div class="item" data-id="pKon9">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Tena Kukuruzna Krupica<span class="qty"></span></div>
+<div class="brand">Tena</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.99€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon10">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Kraš Napolitanke<span class="qty"></span></div>
+<div class="brand">Kraš</div><div class="badges"></div></div>
+<div class="price"><div class="cur">1.49€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon11">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Cedevita Fresh Negazirano Piće<span class="qty"></span></div>
+<div class="brand">Cedevita</div><div class="badges"><span class="badge disc">-17%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.19€</div></div></div>
+</div></div><div class="item" data-id="pKon12">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Pepsi Gazirano Piće<span class="qty"></span></div>
+<div class="brand">Pepsi</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.85€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon13">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Čokolino plus fit<span class="qty"></span></div>
+<div class="brand">Podravka</div><div class="badges"><span class="badge disc">-30%</span></div></div>
+<div class="price"><div class="cur">3.49€</div><div class="old">4.99€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon14">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Nestle dječje pahuljice<span class="qty"></span></div>
+<div class="brand">Nestle</div><div class="badges"><span class="badge disc">-22%</span></div></div>
+<div class="price"><div class="cur">3.59€</div><div class="old">4.59€</div></div></div>
+</div></div><div class="item" data-id="pKon15">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Domestos pjena za čišćenje<span class="qty"></span></div>
+<div class="brand">Domestos</div><div class="badges"><span class="badge disc">-40%</span></div></div>
+<div class="price"><div class="cur">2.69€</div><div class="old">4.49€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon16">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">DAX Universal sredstvo za čišćenje kućan<span class="qty"></span></div>
+<div class="brand">DAX</div><div class="badges"><span class="badge disc">-46%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.85€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKon17">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Kalodont pasta za zube<span class="qty"></span></div>
+<div class="brand">Kalodont</div><div class="badges"><span class="badge disc">-21%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.25€</div></div></div>
+</div></div><div class="item stockpile" data-id="pKon18">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">DAX Sredstvo za čišćenje kupaonice<span class="qty"></span></div>
+<div class="brand">DAX</div><div class="badges"><span class="badge disc">-37%</span><span class="badge stock">📦 Zalihe</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.58€</div></div></div>
+<div class="tip">💡 <b>Preporuka:</b> Uzmi 3 kom i uštedi 1.77€!</div></div></div></div></div><div class="store-section" data-store="Kaufland">
+<div class="store-hdr" style="border-color:#e31e24"><div><div class="store-name">🏪 Kaufland</div><div class="store-date">📅 05.01.</div></div>
+<div class="store-cnt" style="background:#e31e24">16</div></div>
+<div class="products"><div class="item" data-id="pKau0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Emmentaler polutvrdi kravlji sir<span class="qty"></span></div>
+<div class="brand">Emmentaler</div><div class="badges"><span class="badge disc">-25%</span></div></div>
+<div class="price"><div class="cur">0.74€</div><div class="old">0.99€</div></div></div>
+</div></div><div class="item" data-id="pKau1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Posebna salama<span class="qty"></span></div>
+<div class="brand">POLI</div><div class="badges"><span class="badge disc">-32%</span></div></div>
+<div class="price"><div class="cur">2.49€</div><div class="old">3.65€</div></div></div>
+</div></div><div class="item" data-id="pKau2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Kuhana šunka<span class="qty"></span></div>
+<div class="brand">PIVAC</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.85€</div><div class="old">0.90€</div></div></div>
+</div></div><div class="item" data-id="pKau3">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">PIK Mortadela<span class="qty"></span></div>
+<div class="brand">PIK</div><div class="badges"><span class="badge disc">-19%</span></div></div>
+<div class="price"><div class="cur">2.19€</div><div class="old">2.69€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau4">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">ROZETO Šunka u ovitku<span class="qty"></span></div>
+<div class="brand">ROZETO</div><div class="badges"><span class="badge disc">-90%</span></div></div>
+<div class="price"><div class="cur">0.71€</div><div class="old">7.24€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau5">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">DANONE Fantasia jogurt<span class="qty"></span></div>
+<div class="brand">DANONE</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.99€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau6">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Juha razne vrste<span class="qty"></span></div>
+<div class="brand">ALEVA</div><div class="badges"><span class="badge disc">-29%</span></div></div>
+<div class="price"><div class="cur">0.39€</div><div class="old">0.55€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item stockpile" data-id="pKau7">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Tjestenina penne rigate<span class="qty"></span></div>
+<div class="brand">Parodi</div><div class="badges"><span class="badge disc">-37%</span><span class="badge stock">📦 Zalihe</span></div></div>
+<div class="price"><div class="cur">1.19€</div><div class="old">1.89€</div></div></div>
+<div class="tip">💡 <b>Preporuka:</b> Uzmi 3 kom i uštedi 2.10€!</div></div></div><div class="item" data-id="pKau8">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Njoki od krumpirovog tijesta<span class="qty"></span></div>
+<div class="brand">K-Classic</div><div class="badges"><span class="badge disc">-23%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.29€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau9">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Pommes frites<span class="qty"></span></div>
+<div class="brand">K-Classic</div><div class="badges"><span class="badge disc">-40%</span></div></div>
+<div class="price"><div class="cur">1.49€</div><div class="old">2.49€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau10">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Flips s kikirikijem<span class="qty"></span></div>
+<div class="brand">SMOKI</div><div class="badges"><span class="badge disc">-20%</span></div></div>
+<div class="price"><div class="cur">0.55€</div><div class="old">0.69€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau11">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">NESQUIK Instant kakao napitak<span class="qty"></span></div>
+<div class="brand">NESQUIK</div><div class="badges"><span class="badge disc">-31%</span></div></div>
+<div class="price"><div class="cur">3.79€</div><div class="old">5.49€</div></div></div>
+</div></div><div class="item" data-id="pKau12">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">TETA VIOLETA Sredstvo za čišćenje podova<span class="qty"></span></div>
+<div class="brand">TETA VIOLETA</div><div class="badges"><span class="badge disc">-49%</span></div></div>
+<div class="price"><div class="cur">1.49€</div><div class="old">2.95€</div></div></div>
+</div></div><div class="item" data-id="pKau13">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Libresse Higijenski ulošci<span class="qty"></span></div>
+<div class="brand">Libresse</div><div class="badges"><span class="badge disc">-23%</span></div></div>
+<div class="price"><div class="cur">1.74€</div><div class="old">2.25€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau14">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Rexona Dezodorans<span class="qty"></span></div>
+<div class="brand">Rexona</div><div class="badges"><span class="badge disc">-33%</span></div></div>
+<div class="price"><div class="cur">2.35€</div><div class="old">3.50€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKau15">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Cekina Varikina<span class="qty"></span></div>
+<div class="brand">Cekina</div><div class="badges"><span class="badge disc">-25%</span></div></div>
+<div class="price"><div class="cur">1.49€</div><div class="old">1.99€</div></div></div>
+</div></div></div></div><div class="store-section" data-store="Lidl">
+<div class="store-hdr" style="border-color:#0050aa"><div><div class="store-name">🏪 Lidl</div><div class="store-date">📅 05.01.</div></div>
+<div class="store-cnt" style="background:#0050aa">15</div></div>
+<div class="products"><div class="item" data-id="pLid0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Sirni namaz<span class="qty"></span></div>
+<div class="brand">Milbona</div><div class="badges"><span class="badge disc">-31%</span></div></div>
+<div class="price"><div class="cur">1.69€</div><div class="old">2.45€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pLid1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Pikok Mesni doručak<span class="qty"></span></div>
+<div class="brand">Pikok</div><div class="badges"><span class="badge disc">-32%</span></div></div>
+<div class="price"><div class="cur">1.69€</div><div class="old">2.49€</div></div></div>
+</div></div><div class="item" data-id="pLid2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Pikok Kranjska kobasica<span class="qty"></span></div>
+<div class="brand">Pikok</div><div class="badges"><span class="badge disc">-12%</span></div></div>
+<div class="price"><div class="cur">1.75€</div><div class="old">1.99€</div></div></div>
+</div></div><div class="item" data-id="pLid3">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Svježi svinjski vrat bez kosti<span class="qty"></span></div>
+<div class="brand">Lidl</div><div class="badges"><span class="badge disc">-24%</span></div></div>
+<div class="price"><div class="cur">5.29€</div><div class="old">6.99€</div></div></div>
+</div></div><div class="item" data-id="pLid4">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Ledo Panirani riblji nuggets<span class="qty"></span></div>
+<div class="brand">Ledo</div><div class="badges"></div></div>
+<div class="price"><div class="cur">2.79€</div></div></div>
+</div></div><div class="item" data-id="pLid5">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Trattoria Alfredo Picco Pizzi XXL<span class="qty"></span></div>
+<div class="brand">Trattoria Alfredo</div><div class="badges"><span class="badge disc">-28%</span></div></div>
+<div class="price"><div class="cur">6.99€</div><div class="old">9.71€</div></div></div>
+</div></div><div class="item" data-id="pLid6">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Solevita Svježi Smoothie<span class="qty"></span></div>
+<div class="brand">Solevita</div><div class="badges"><span class="badge disc">-34%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.49€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pLid7">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Lord Nelson Biljni čaj XXL<span class="qty"></span></div>
+<div class="brand">Lord Nelson</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.09€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pLid8">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Solevita Sok od jabuke XXL<span class="qty"></span></div>
+<div class="brand">Solevita</div><div class="badges"></div></div>
+<div class="price"><div class="cur">2.49€</div></div></div>
+</div></div><div class="item" data-id="pLid9">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Crownfield Choco rice XXL<span class="qty"></span></div>
+<div class="brand">Crownfield</div><div class="badges"></div></div>
+<div class="price"><div class="cur">3.99€</div><div class="old">4.43€</div></div></div>
+</div></div><div class="item" data-id="pLid10">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Crownfield Čokoladni jastučići XXL<span class="qty"></span></div>
+<div class="brand">Crownfield</div><div class="badges"></div></div>
+<div class="price"><div class="cur">3.99€</div><div class="old">4.43€</div></div></div>
+</div></div><div class="item" data-id="pLid11">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Orašasti plodovi XXL<span class="qty"></span></div>
+<div class="brand">Alesto</div><div class="badges"></div></div>
+<div class="price"><div class="cur">4.59€</div></div></div>
+</div></div><div class="item" data-id="pLid12">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">W5 Tablete za perilicu posuđa XXL<span class="qty"></span></div>
+<div class="brand">W5</div><div class="badges"><span class="badge disc">-20%</span></div></div>
+<div class="price"><div class="cur">6.79€</div><div class="old">8.49€</div></div></div>
+</div></div><div class="item stockpile" data-id="pLid13">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Jogurt čvrsti<span class="qty"></span></div>
+<div class="brand">Pilos</div><div class="badges"><span class="badge disc">-41%</span><span class="badge stock">📦 Zalihe</span></div></div>
+<div class="price"><div class="cur">0.22€</div><div class="old">0.37€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div><div class="tip">💡 <b>Preporuka:</b> Uzmi 3 kom i uštedi 0.45€!</div></div></div><div class="item stockpile" data-id="pLid14">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Sondey Neo kakao keksi s kremom od vanil<span class="qty"></span></div>
+<div class="brand">Sondey</div><div class="badges"><span class="badge disc">-29%</span><span class="badge stock">📦 Zalihe</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.39€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div></div></div><div class="store-section" data-store="KTC">
+<div class="store-hdr" style="border-color:#d4a017"><div><div class="store-name">🏪 KTC</div><div class="store-date">📅 05.01.</div></div>
+<div class="store-cnt" style="background:#d4a017">10</div></div>
+<div class="products"><div class="item" data-id="pKTC0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Pašteta<span class="qty"></span></div>
+<div class="brand">Podravka</div><div class="badges"><span class="badge disc">-10%</span></div></div>
+<div class="price"><div class="cur">0.53€</div><div class="old">0.59€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKTC1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Čajna, kulen ili zimska kobasica<span class="qty"></span></div>
+<div class="brand">Podravka</div><div class="badges"></div></div>
+<div class="price"><div class="cur">4.69€</div></div></div>
+</div></div><div class="item" data-id="pKTC2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Čajna, zimska, kulen, pannonia ili srije<span class="qty"></span></div>
+<div class="brand">Podravka</div><div class="badges"></div></div>
+<div class="price"><div class="cur">1.59€</div></div></div>
+</div></div><div class="item" data-id="pKTC3">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Tirolska kobasica<span class="qty"></span></div>
+<div class="brand">Gavrilović</div><div class="badges"><span class="badge disc">-20%</span></div></div>
+<div class="price"><div class="cur">4.29€</div><div class="old">5.39€</div></div></div>
+</div></div><div class="item" data-id="pKTC4">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Tuna komadići<span class="qty"></span></div>
+<div class="brand">Giana</div><div class="badges"><span class="badge disc">-24%</span></div></div>
+<div class="price"><div class="cur">1.05€</div><div class="old">1.39€</div></div></div>
+</div></div><div class="item" data-id="pKTC5">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Majoneza delikates<span class="qty"></span></div>
+<div class="brand">Podravka</div><div class="badges"><span class="badge disc">-25%</span></div></div>
+<div class="price"><div class="cur">0.79€</div><div class="old">1.05€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKTC6">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Čips od jabuke 20 g<span class="qty">20 g</span></div>
+<div class="brand">Probavi Me</div><div class="badges"><span class="badge disc">-25%</span></div></div>
+<div class="price"><div class="cur">0.59€</div><div class="old">0.79€</div></div></div>
+</div></div><div class="item" data-id="pKTC7">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Petit keks kakao<span class="qty"></span></div>
+<div class="brand">Petit</div><div class="badges"><span class="badge disc">-34%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.49€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKTC8">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Kikiriki Chio<span class="qty"></span></div>
+<div class="brand">Chio</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.39€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pKTC9">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Deterdžent za rublje<span class="qty"></span></div>
+<div class="brand">Violeta</div><div class="badges"></div></div>
+<div class="price"><div class="cur">5.99€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div></div></div><div class="store-section" data-store="Spar">
+<div class="store-hdr" style="border-color:#00a651"><div><div class="store-name">🏪 Spar</div><div class="store-date">📅 07.01.</div></div>
+<div class="store-cnt" style="background:#00a651">5</div></div>
+<div class="products"><div class="item" data-id="pSpa0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Sir Gouda<span class="qty"></span></div>
+<div class="brand">Podravac</div><div class="badges"><span class="badge disc">-24%</span></div></div>
+<div class="price"><div class="cur">2.79€</div><div class="old">3.69€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pSpa1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Tortilla pšenične SPAR<span class="qty"></span></div>
+<div class="brand">SPAR</div><div class="badges"><span class="badge disc">-45%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.79€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pSpa2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Krumpir<span class="qty"></span></div>
+<div class="brand">super prilika</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.39€</div></div></div>
+</div></div><div class="item" data-id="pSpa3">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Masline SPAR<span class="qty"></span></div>
+<div class="brand">SPAR</div><div class="badges"><span class="badge disc">-41%</span></div></div>
+<div class="price"><div class="cur">0.99€</div><div class="old">1.69€</div></div></div>
+</div></div><div class="item" data-id="pSpa4">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Ručnik<span class="qty"></span></div>
+<div class="brand">S-BUDGET</div><div class="badges"></div></div>
+<div class="price"><div class="cur">0.99€</div></div></div>
+</div></div></div></div><div class="store-section" data-store="DM">
+<div class="store-hdr" style="border-color:#00a0d2"><div><div class="store-name">🏪 DM</div><div class="store-date">📅 02.01.</div></div>
+<div class="store-cnt" style="background:#00a0d2">5</div></div>
+<div class="products"><div class="item" data-id="pDM0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">babylove EKO kašica od jabuke i banane<span class="qty"></span></div>
+<div class="brand">babylove</div><div class="badges"><span class="badge disc">-10%</span></div></div>
+<div class="price"><div class="cur">1.75€</div><div class="old">1.95€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pDM1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Sanft&Sicher Classic vlažni toaletni pap<span class="qty"></span></div>
+<div class="brand">Sanft&Sicher</div><div class="badges"><span class="badge disc">-17%</span></div></div>
+<div class="price"><div class="cur">0.75€</div><div class="old">0.90€</div></div></div>
+</div></div><div class="item" data-id="pDM2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Hrana za mačke piletina i puretina u uma<span class="qty"></span></div>
+<div class="brand">Dein Bestes</div><div class="badges"><span class="badge disc">-20%</span></div></div>
+<div class="price"><div class="cur">0.40€</div><div class="old">0.50€</div></div></div>
+</div></div><div class="item stockpile" data-id="pDM3">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Balea MEN Fresh šampon za kosu<span class="qty"></span></div>
+<div class="brand">Balea MEN</div><div class="badges"><span class="badge disc">-50%</span><span class="badge stock">📦 Zalihe</span></div></div>
+<div class="price"><div class="cur">1.20€</div><div class="old">2.40€</div></div></div>
+<div class="tip">💡 <b>Preporuka:</b> Uzmi 3 kom i uštedi 3.60€!</div></div></div><div class="item stockpile" data-id="pDM4">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Tvrdi sapun shea maslac<span class="qty"></span></div>
+<div class="brand">alverde</div><div class="badges"><span class="badge disc">-20%</span><span class="badge stock">📦 Zalihe</span></div></div>
+<div class="price"><div class="cur">0.80€</div><div class="old">1.00€</div></div></div>
+</div></div></div></div><div class="store-section" data-store="Plodine">
+<div class="store-hdr" style="border-color:#ff6600"><div><div class="store-name">🏪 Plodine</div><div class="store-date">📅 07.01.</div></div>
+<div class="store-cnt" style="background:#ff6600">3</div></div>
+<div class="products"><div class="item" data-id="pPlo0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Sir Trapist<span class="qty"></span></div>
+<div class="brand">Paška Sirana</div><div class="badges"><span class="badge disc">-92%</span></div></div>
+<div class="price"><div class="cur">1.85€</div><div class="old">23.90€</div></div></div>
+</div></div><div class="item" data-id="pPlo1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Čajna kobasica<span class="qty"></span></div>
+<div class="brand">Podravka</div><div class="badges"></div></div>
+<div class="price"><div class="cur">1.09€</div></div></div>
+</div></div><div class="item" data-id="pPlo2">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Juha u vrećici<span class="qty"></span></div>
+<div class="brand">Fino</div><div class="badges"><span class="badge disc">-20%</span></div></div>
+<div class="price"><div class="cur">0.60€</div><div class="old">0.75€</div></div></div>
+</div></div></div></div><div class="store-section" data-store="Interspar">
+<div class="store-hdr" style="border-color:#3498db"><div><div class="store-name">🏪 Interspar</div><div class="store-date">📅 05.01.</div></div>
+<div class="store-cnt" style="background:#3498db">2</div></div>
+<div class="products"><div class="item" data-id="pInt0">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Hrenovke Frankfurter<span class="qty"></span></div>
+<div class="brand">S-BUDGET</div><div class="badges"><span class="badge disc">-22%</span></div></div>
+<div class="price"><div class="cur">0.35€</div><div class="old">0.45€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div><div class="item" data-id="pInt1">
+<div class="checkbox" onclick="toggle(this)"></div>
+<div class="content"><div class="main"><div class="info"><div class="name">Izotonični napitak Iso Sport<span class="qty"></span></div>
+<div class="brand">Iso Sport</div><div class="badges"><span class="badge disc">-21%</span></div></div>
+<div class="price"><div class="cur">0.85€</div><div class="old">1.07€</div></div></div>
+<div class="details"><div class="det-title">📍 Druge trgovine</div><div class="other"><spa</div></div></div></div></div></div><div class="footer">🛒 SmartCart • 11.01.2026 09:29</div></div>
+<div class="filter-bar">
+<button class="btn pri" onclick="showChecked()">🔍 FILTRIRAJ<span class="cnt" id="cnt">0</span></button>
+<button class="btn sec" onclick="reset()">↺ RESET</button>
+</div>
+<script>
+let checked=new Set();
+function toggle(el){
+el.classList.toggle('checked');
+const item=el.closest('.item'),id=item.dataset.id;
+if(el.classList.contains('checked')){checked.add(id);item.classList.add('checked')}
+else{checked.delete(id);item.classList.remove('checked')}
+document.getElementById('cnt').textContent=checked.size;
+try{localStorage.setItem('sc',JSON.stringify([...checked]))}catch(e){}}
+
+function showChecked(){
+if(!checked.size){alert('Prvo označi proizvode kvačicom!');return}
+document.querySelectorAll('.item').forEach(i=>i.classList.toggle('hidden',!checked.has(i.dataset.id)));
+document.querySelectorAll('.store-section').forEach(s=>s.classList.toggle('hidden',!s.querySelectorAll('.item:not(.hidden)').length))}
+
+function reset(){
+document.querySelectorAll('.item,.store-section').forEach(e=>e.classList.remove('hidden'));
+document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.store==='all'))}
+
+function filterStore(s){
+document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.store===s));
+if(s==='all'){document.querySelectorAll('.store-section').forEach(sec=>sec.classList.remove('hidden'))}
+else{document.querySelectorAll('.store-section').forEach(sec=>sec.classList.toggle('hidden',sec.dataset.store!==s))}}
+
+try{const saved=JSON.parse(localStorage.getItem('sc')||'[]');
+saved.forEach(id=>{const item=document.querySelector(`[data-id="${id}"]`);
+if(item){item.querySelector('.checkbox').classList.add('checked');item.classList.add('checked');checked.add(id)}});
+document.getElementById('cnt').textContent=checked.size}catch(e){}
+</script></body></html>
