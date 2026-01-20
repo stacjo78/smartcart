@@ -3,2149 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🛒 SmartCart</title>
+<title>🛒 SmartCart v12 - 20.01.2026</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;min-height:100vh;padding:15px;padding-bottom:80px;color:#1a1a1a}
+body{font-family:-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:15px 15px 100px}
 .container{max-width:600px;margin:0 auto}
-.header{background:linear-gradient(135deg,#2c3e50 0%,#3498db 100%);border-radius:16px;padding:25px 20px;margin-bottom:15px;color:#fff;text-align:center}
-.header h1{font-size:22px;margin-bottom:5px}
-.header .date{opacity:.85;font-size:13px}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
-.stat-card{background:rgba(255,255,255,.15);border-radius:10px;padding:12px;text-align:center}
+.header{background:linear-gradient(135deg,#2c3e50 0%,#3498db 100%);border-radius:16px;padding:25px 20px;margin-bottom:15px;color:#fff;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.header h1{font-size:28px;margin-bottom:8px;font-weight:800}
+.header .version{opacity:.9;font-size:13px;color:#ffd700;font-weight:600;margin-bottom:15px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0 0}
+.stat-card{background:rgba(255,255,255,.15);border-radius:10px;padding:12px;text-align:center;backdrop-filter:blur(10px)}
 .stat-val{font-size:24px;font-weight:700}
 .stat-lbl{font-size:11px;opacity:.85;margin-top:2px}
-.store-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;padding:12px;background:#fff;border-radius:12px}
-.chip{padding:8px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;background:#e0e0e0;color:#555;transition:all .2s}
-.chip:hover{background:#d0d0d0}
-.chip.active{background:#3498db;color:#fff}
-.store-section{background:#fff;border-radius:16px;margin-bottom:15px;overflow:hidden}
+.filters-bar{background:#fff;border-radius:12px;padding:12px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.1);display:flex;gap:10px;flex-wrap:wrap}
+.filter-group{flex:1;min-width:140px}
+.filter-group label{font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:4px}
+.filter-select{width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:#fff;transition:all .2s}
+.filter-select:hover{border-color:#3498db}
+.filter-select:focus{outline:none;border-color:#3498db;box-shadow:0 0 0 3px rgba(52,152,219,.1)}
+.btn-filter{padding:10px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-filter.stockpile{background:linear-gradient(135deg,#27ae60 0%,#229954 100%);color:#fff}
+.btn-filter:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.category-bar{position:sticky;top:0;z-index:100;background:#fff;padding:12px;border-radius:12px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.1);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.category-bar::-webkit-scrollbar{height:6px}
+.category-bar::-webkit-scrollbar-thumb{background:#cbd5e0;border-radius:3px}
+.category-chips{display:flex;gap:8px;white-space:nowrap}
+.cat-chip{padding:10px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;flex-shrink:0;user-select:none}
+.cat-chip:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.15)}
+.cat-chip .chip-count{background:rgba(0,0,0,.1);padding:2px 7px;border-radius:10px;font-size:11px;font-weight:700}
+.cat-chip.active .chip-count{background:rgba(255,255,255,.3)}
+.cat-chip.cat-sve{background:linear-gradient(135deg,#e0e0e0,#bdbdbd);color:#424242}
+.cat-chip.cat-sve.active{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff}
+.cat-chip.cat-meso{background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#c62828}
+.cat-chip.cat-meso.active{background:linear-gradient(135deg,#e53935,#c62828);color:#fff}
+.cat-chip.cat-mlijecno{background:linear-gradient(135deg,#e3f2fd,#bbdefb);color:#1565c0}
+.cat-chip.cat-mlijecno.active{background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff}
+.cat-chip.cat-napici{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);color:#2e7d32}
+.cat-chip.cat-napici.active{background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff}
+.cat-chip.cat-higijena{background:linear-gradient(135deg,#fce4ec,#f8bbd0);color:#c2185b}
+.cat-chip.cat-higijena.active{background:linear-gradient(135deg,#e91e63,#c2185b);color:#fff}
+.cat-chip.cat-osnovne_namirnice{background:linear-gradient(135deg,#fff3e0,#ffe0b2);color:#e65100}
+.cat-chip.cat-osnovne_namirnice.active{background:linear-gradient(135deg,#fb8c00,#e65100);color:#fff}
+.cat-chip.cat-voce_povrce{background:linear-gradient(135deg,#f1f8e9,#dcedc8);color:#558b2f}
+.cat-chip.cat-voce_povrce.active{background:linear-gradient(135deg,#7cb342,#558b2f);color:#fff}
+.cat-chip.cat-ostalo{background:linear-gradient(135deg,#f5f5f5,#e0e0e0);color:#757575}
+.cat-chip.cat-ostalo.active{background:linear-gradient(135deg,#9e9e9e,#757575);color:#fff}
+.store-section{background:#fff;border-radius:16px;margin-bottom:15px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.1);transition:all .3s}
 .store-section.hidden{display:none}
-.store-header{padding:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-left:5px solid #3498db}
-.store-info h2{font-size:18px}
-.store-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:12px;color:#666}
-.freshness{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
-.freshness.fresh{background:#d4edda;color:#155724}
-.freshness.warning{background:#fff3cd;color:#856404}
-.freshness.old{background:#f8d7da;color:#721c24}
-.store-count{background:#3498db;color:#fff;padding:8px 14px;border-radius:20px;font-weight:600;font-size:13px}
+.store-header{padding:18px;display:flex;justify-content:space-between;align-items:center;border-left:5px solid #3498db;background:linear-gradient(90deg,#fff 0%,#f8fafc 100%)}
+.store-info h2{font-size:18px;font-weight:700}
+.store-count{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;padding:8px 14px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 2px 8px rgba(52,152,219,.3)}
 .products-list{padding:0 15px 15px}
-.product-item{padding:14px 0;border-bottom:1px solid #f0f0f0;transition:opacity .3s}
+.product-item{padding:14px 0;border-bottom:1px solid #f0f0f0;transition:all .3s}
 .product-item:last-child{border-bottom:none}
-.product-item.checked{opacity:.5;background:#f8f8f8;margin:0 -15px;padding:14px 15px}
+.product-item.checked{opacity:.5;background:#f8f8f8;margin:0 -15px;padding:14px 15px;border-radius:8px}
 .product-item.checked .product-name{text-decoration:line-through}
-.product-item.fake-sale{background:#fff5f5;margin:0 -15px;padding:14px 15px;border-left:3px solid #e74c3c}
-.product-item.stockpile-item{background:#f0fff4;margin:0 -15px;padding:14px 15px;border-left:3px solid #27ae60}
+.product-item.stockpile{background:linear-gradient(90deg,#f0fdf4 0%,#dcfce7 100%);border-left:4px solid #22c55e;padding-left:11px}
+.product-item[data-category="MESO"]{border-left:3px solid #e53935;padding-left:11px}
+.product-item[data-category="MLIJEČNO"]{border-left:3px solid #1e88e5;padding-left:11px}
+.product-item[data-category="HIGIJENA"]{border-left:3px solid #e91e63;padding-left:11px}
+.product-item[data-category="NAPICI"]{border-left:3px solid #43a047;padding-left:11px}
+.product-item[data-category="OSNOVNE_NAMIRNICE"]{border-left:3px solid #fb8c00;padding-left:11px}
+.product-item[data-category="VOĆE_POVRĆE"]{border-left:3px solid #7cb342;padding-left:11px}
 .product-main{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .product-left{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0}
 .product-checkbox{width:24px;height:24px;border-radius:50%;border:2px solid #ddd;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;margin-top:2px}
-.product-checkbox:hover{border-color:#3498db}
-.product-checkbox.checked{background:#27ae60;border-color:#27ae60}
+.product-checkbox:hover{border-color:#3498db;transform:scale(1.1)}
+.product-checkbox.checked{background:linear-gradient(135deg,#27ae60,#229954);border-color:#27ae60;box-shadow:0 2px 8px rgba(39,174,96,.3)}
 .product-checkbox.checked::after{content:"✓";color:#fff;font-size:14px;font-weight:700}
 .product-info{flex:1;min-width:0}
-.product-name{font-weight:600;font-size:14px;color:#2c3e50;margin-bottom:2px}
+.product-name{font-weight:600;font-size:14px;color:#2c3e50;margin-bottom:4px;line-height:1.3}
 .product-qty{display:inline-block;background:#e2e8f0;color:#475569;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;margin-left:4px}
 .product-brand{font-size:12px;color:#7f8c8d;margin-bottom:4px}
-.product-badges{display:flex;flex-wrap:wrap;gap:4px}
+.product-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
 .badge.discount{background:#fee2e2;color:#dc2626}
-.badge.best{background:#dcfce7;color:#16a34a}
-.badge.fake{background:#fef3c7;color:#d97706}
-.badge.stockpile{background:#dbeafe;color:#2563eb}
-.badge.date{background:#f3f4f6;color:#6b7280}
+.badge.category{background:#f3e8ff;color:#7c3aed}
+.badge.stockpile{background:#dcfce7;color:#16a34a;font-weight:700}
+.product-dates{font-size:11px;color:#64748b;margin-top:4px}
+.stockpile-info{background:#dcfce7;border-left:3px solid#22c55e;padding:6px 10px;margin-top:6px;border-radius:6px;font-size:12px;color:#15803d;font-weight:600}
+.stockpile-info .qty{color:#16a34a;font-weight:700}
+.stockpile-info .savings{color:#dc2626;font-weight:700}
 .product-price{text-align:right;flex-shrink:0}
 .price-current{font-size:20px;font-weight:700;color:#27ae60}
-.price-current.fake{color:#e67e22}
-.price-old{font-size:12px;color:#999;text-decoration:line-through}
-.price-unit{font-size:10px;color:#888}
-.product-details{margin-top:10px;padding:10px;background:#f8fafc;border-radius:8px;font-size:12px}
-.detail-section{margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0}
-.detail-section:first-child{margin-top:0;padding-top:0;border-top:none}
-.detail-section-title{font-size:10px;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;font-weight:600}
-.other-stores{display:flex;flex-wrap:wrap;gap:6px}
-.store-price-tag{display:inline-block;padding:3px 8px;background:#e2e8f0;border-radius:4px;font-size:11px}
-.store-price-tag.best-price{background:#dcfce7;color:#166534;font-weight:600}
-.detail-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e2e8f0}
-.detail-row:last-child{border-bottom:none}
-.detail-label{color:#64748b}
-.detail-value{font-weight:600;color:#334155}
-.detail-value.best{color:#16a34a}
-.detail-value.warning{color:#dc2626}
-.tip-box{margin-top:8px;padding:8px 10px;border-radius:6px;font-size:11px;line-height:1.4}
-.tip-box.success{background:#ecfdf5;border-left:3px solid #10b981;color:#065f46}
-.tip-box.danger{background:#fef2f2;border-left:3px solid #ef4444;color:#991b1b}
-.tip-box.info{background:#eff6ff;border-left:3px solid #3b82f6;color:#1e40af}
+.price-old{font-size:12px;color:#999;text-decoration:line-through;margin-top:2px}
 .bottom-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 15px;box-shadow:0 -2px 10px rgba(0,0,0,.1);display:flex;gap:10px;justify-content:center;z-index:1000}
-.btn{padding:12px 24px;border:none;border-radius:25px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
-.btn.primary{background:#3498db;color:#fff}
-.btn .count{background:rgba(255,255,255,.3);padding:2px 8px;border-radius:10px;font-size:12px}
-.footer{text-align:center;padding:25px 15px;color:#9ca3af;font-size:12px}
-.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:15px;padding:12px;background:#fff;border-radius:10px;font-size:11px}
-@media(max-width:400px){body{padding:10px;padding-bottom:80px}.store-header{flex-direction:column;align-items:flex-start}.store-count{align-self:flex-start}}
+.btn{padding:12px 24px;border:none;border-radius:25px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;user-select:none}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.2)}
+.btn.primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.btn .count{background:rgba(255,255,255,.3);padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700}
+.footer{text-align:center;padding:25px 15px;color:#fff;font-size:12px}
+.footer .version-tag{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:20px;display:inline-block;margin-top:10px;font-weight:600;backdrop-filter:blur(10px)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.product-item{animation:fadeIn .3s ease-out}
+@media(max-width:400px){body{padding:10px 10px 80px}.header h1{font-size:22px}}
 </style>
 </head>
 <body>
 <div class="container">
+
 <div class="header">
-<h1>🛒 SmartCart Tjedna Ponuda</h1>
-<p class="date">Ponedjeljak, 19. siječnja 2026.</p>
-<div class="stats-grid">
-<div class="stat-card"><div class="stat-val">101</div><div class="stat-lbl">Pronađeno</div></div>
-<div class="stat-card"><div class="stat-val" style="color:#2ecc71">75€</div><div class="stat-lbl">Moguća ušteda</div></div>
-<div class="stat-card"><div class="stat-val">6</div><div class="stat-lbl">📦 Za zalihe</div></div>
-<div class="stat-card"><div class="stat-val" style="color:#e67e22">0</div><div class="stat-lbl">⚠️ Lažne akcije</div></div>
-</div>
-</div>
-<div class="store-filter">
-<div class="chip active" data-store="all" onclick="filterStore('all')">Sve trgovine</div>
-<div class="chip" data-store="ktc" onclick="filterStore('ktc')">KTC</div><div class="chip" data-store="kaufland" onclick="filterStore('kaufland')">Kaufland</div><div class="chip" data-store="konzum" onclick="filterStore('konzum')">Konzum</div><div class="chip" data-store="lidl" onclick="filterStore('lidl')">Lidl</div><div class="chip" data-store="plodine" onclick="filterStore('plodine')">Plodine</div>
-</div>
-<div class="store-section" data-store="konzum">
-<div class="store-header" style="border-left-color:#e31e24">
-<div class="store-info">
-<h2>🏪 Konzum</h2>
-<div class="store-meta"><span class="freshness fresh">🟢 Katalog od 17.01.</span></div>
-</div>
-<div class="store-count" style="background:#e31e24">27 proizvoda</div>
-</div>
-<div class="products-list">
-<div class="product-item" data-id="1">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Choco Banane XXL <span class="product-qty">510g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-40%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">4.99€</div>
-<div class="price-unit">0.59€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="2">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">'Z Bregov Svježi Sir u slanoj maramici <span class="product-qty">600g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-40%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.59€</div>
-<div class="price-old">5.98€</div>
-<div class="price-unit">0.60€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item stockpile-item" data-id="3">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">JAR DETERDŽENT za ručno pranje posuđa, lemon <span class="product-qty">900ml</span></div>
-<div class="product-brand">Jar</div>
-<div class="product-badges"><span class="badge discount">-36%</span><span class="badge stockpile">📦 Zalihe</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">4.65€</div>
-<div class="price-unit">0.33€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">DM 4.20€</span></div>
-</div><div class="tip-box success">💡 <strong>Preporuka:</strong> Uzmi 3 kom i uštedi <strong>4.98€</strong>!</div></div>
-</div>
-<div class="product-item" data-id="4">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Sanytol sredstvo za čišćenje, odabrane vrste, 500m <span class="product-qty">500ml</span></div>
-<div class="product-brand">Sanytol</div>
-<div class="product-badges"><span class="badge discount">-35%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.39€</div>
-<div class="price-old">3.65€</div>
-<div class="price-unit">0.48€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="5">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">PIKETA PAŠTETA odabrane vrste, 95g <span class="product-qty">95g</span></div>
-<div class="product-brand">Piketa</div>
-<div class="product-badges"><span class="badge discount">-34%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.79€</div>
-<div class="price-old">1.19€</div>
-<div class="price-unit">0.83€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="6">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Lay's Čips Slani, Paprika <span class="product-qty">200g</span></div>
-<div class="product-brand">Lay's</div>
-<div class="product-badges"><span class="badge discount">-34%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.99€</div>
-<div class="price-old">1.49€</div>
-<div class="price-unit">0.49€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 1.99€</span><span class="store-price-tag">KTC 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="7">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Domestos sredstvo za čišćenje, odabrane vrste, 750 <span class="product-qty">750ml</span></div>
-<div class="product-brand">Domestos</div>
-<div class="product-badges"><span class="badge discount">-30%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.29€</div>
-<div class="price-old">3.29€</div>
-<div class="price-unit">0.31€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 2.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="8">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Frosch sredstvo za čišćenje universal classic, 1l <span class="product-qty">1L</span></div>
-<div class="product-brand">Frosch</div>
-<div class="product-badges"><span class="badge discount">-30%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.16€</div>
-<div class="price-old">3.09€</div>
-<div class="price-unit">0.22€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="9">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Ledo Panirani Kolutići Lignje <span class="product-qty">1kg</span></div>
-<div class="product-brand">Ledo</div>
-<div class="product-badges"><span class="badge discount">-25%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">5.99€</div>
-<div class="price-old">7.99€</div>
-<div class="price-unit">0.60€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="10">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">NATUR PAPIRNATI RUČNICI <span class="product-qty">30/1</span></div>
-<div class="product-brand">Natur</div>
-<div class="product-badges"><span class="badge discount">-25%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.49€</div>
-<div class="price-old">3.32€</div>
-
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="11">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Z Bregov Trajno Mlijeko <span class="product-qty">2L</span></div>
-<div class="product-brand">Z Bregov</div>
-<div class="product-badges"><span class="badge discount">-24%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.78€</div>
-<div class="price-old">2.34€</div>
-<div class="price-unit">0.09€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="12">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">PRESIDENT SIR polutvrdi, odabrane vrste <span class="product-qty">400g</span></div>
-<div class="product-brand">President</div>
-<div class="product-badges"><span class="badge discount">-22%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">4.19€</div>
-<div class="price-old">5.39€</div>
-<div class="price-unit">1.05€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="13">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">FRANCK CREMA KAVA mljevena, 400g <span class="product-qty">400g</span></div>
-<div class="product-brand">Franck</div>
-<div class="product-badges"><span class="badge discount">-21%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">6.49€</div>
-<div class="price-old">8.19€</div>
-<div class="price-unit">1.62€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 10.75€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="14">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">JAMI PITA krumpiruša, sirnica, zeljanica <span class="product-qty">900g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-19%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.39€</div>
-<div class="price-old">4.19€</div>
-<div class="price-unit">0.38€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="15">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">DUKATOS GRČKI TIP JOGURTA odabrane vrste, 150g <span class="product-qty">150g</span></div>
-<div class="product-brand">DUKATOS</div>
-<div class="product-badges"><span class="badge discount">-18%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.09€</div>
-<div class="price-unit">0.59€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">Plodine 0.89€</span><span class="store-price-tag">KTC 1.09€</span><span class="store-price-tag">Kaufland 2.19€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="16">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Podravka Grah smeđi, bijeli <span class="product-qty">230g</span></div>
-<div class="product-brand">Podravka</div>
-<div class="product-badges"><span class="badge discount">-18%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.08€</div>
-<div class="price-unit">0.39€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="17">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">NESCAFÉ 3U1 KAVA INSTANT 24/1 original, strong 336 <span class="product-qty">336g</span></div>
-<div class="product-brand">Nescafé</div>
-<div class="product-badges"><span class="badge discount">-17%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">4.79€</div>
-<div class="price-old">5.79€</div>
-<div class="price-unit">1.43€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item stockpile-item" data-id="18">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">VIOLETA VLAŽNI TOALETNI PAPIR <span class="product-qty">120/1</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-16%</span><span class="badge stockpile">📦 Zalihe</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">3.54€</div>
-
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">KTC 2.99€</span><span class="store-price-tag best-price">Plodine 2.99€</span></div>
-</div><div class="tip-box success">💡 <strong>Preporuka:</strong> Uzmi 3 kom i uštedi <strong>1.65€</strong>!</div></div>
-</div>
-<div class="product-item" data-id="19">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Wudy Hrenovke <span class="product-qty">1kg</span></div>
-<div class="product-brand">AIA</div>
-<div class="product-badges"><span class="badge discount">-13%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.59€</div>
-<div class="price-old">2.99€</div>
-<div class="price-unit">0.26€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="20">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">VIOLETA PAPIRNATI RUČNIK <span class="product-qty">8 kom</span></div>
-<div class="product-brand">Violeta</div>
-<div class="product-badges"><span class="badge discount">-13%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.49€</div>
-<div class="price-old">3.99€</div>
-<div class="price-unit">0.44€/kom</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="21">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">LEDO POMMES FRITES <span class="product-qty">1kg</span></div>
-<div class="product-brand">Ledo</div>
-<div class="product-badges"><span class="badge discount">-12%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">3.39€</div>
-<div class="price-unit">0.30€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="22">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pasirana Rajčica <span class="product-qty">500g</span></div>
-<div class="product-brand">Podravka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.99€</div>
-<div class="price-old">1.09€</div>
-<div class="price-unit">0.20€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">Lidl 0.99€</span><span class="store-price-tag">Plodine 1.21€</span><span class="store-price-tag">Kaufland 1.39€</span><span class="store-price-tag">KTC 1.85€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="23">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">'z Bregov Voćni Jogurt <span class="product-qty">150g</span></div>
-<div class="product-brand">Vindija</div>
-<div class="product-badges"><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.45€</div>
-
-<div class="price-unit">0.30€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="24">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Gavrilović Mesni Doručak <span class="product-qty">450g</span></div>
-<div class="product-brand">Gavrilović</div>
-<div class="product-badges"><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">4.49€</div>
-
-<div class="price-unit">1.00€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="25">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Zvijezda Suncokretovo Ulje <span class="product-qty">1L</span></div>
-<div class="product-brand">Zvijezda</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.59€</div>
-
-<div class="price-unit">0.16€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 1.85€</span><span class="store-price-tag">Plodine 1.85€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="26">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Cedevita Vitaminska Voda odabrane vrste <span class="product-qty">1.5L</span></div>
-<div class="product-brand">Cedevita</div>
-<div class="product-badges"><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.49€</div>
-
-<div class="price-unit">0.10€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="27">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">AJAX Sredstvo za čišćenje podova <span class="product-qty">1L</span></div>
-<div class="product-brand">AJAX</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.89€</div>
-
-<div class="price-unit">0.19€/100ml</div>
-</div>
-</div>
-
-</div>
-</div></div>
-<div class="store-section" data-store="kaufland">
-<div class="store-header" style="border-left-color:#e31e24">
-<div class="store-info">
-<h2>🏪 Kaufland</h2>
-<div class="store-meta"><span class="freshness fresh">🟢 Katalog od 17.01.</span></div>
-</div>
-<div class="store-count" style="background:#e31e24">24 proizvoda</div>
-</div>
-<div class="products-list">
-<div class="product-item" data-id="28">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Kulen ili Čajna kobasica <span class="product-qty">100g</span></div>
-<div class="product-brand">PIK</div>
-<div class="product-badges"><span class="badge discount">-90%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.49€</div>
-<div class="price-old">14.94€</div>
-<div class="price-unit">1.49€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="29">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Trajno mlijeko <span class="product-qty">1L</span></div>
-<div class="product-brand">DUKAT</div>
-<div class="product-badges"><span class="badge discount">-63%</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.93€</div>
-<div class="price-old">2.50€</div>
-<div class="price-unit">0.09€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item stockpile-item" data-id="30">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Sanitar Gel za odčepljivanje odvoda <span class="product-qty">1L</span></div>
-<div class="product-brand">Sanitar</div>
-<div class="product-badges"><span class="badge discount">-50%</span><span class="badge stockpile">📦 Zalihe</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do utorka, 20.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.89€</div>
-<div class="price-old">3.79€</div>
-<div class="price-unit">0.19€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Plodine 1.99€</span><span class="store-price-tag">KTC 2.59€</span><span class="store-price-tag">Konzum 3.99€</span></div>
-</div><div class="tip-box success">💡 <strong>Preporuka:</strong> Uzmi 5 kom i uštedi <strong>9.50€</strong>!</div></div>
-</div>
-<div class="product-item" data-id="31">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">WC Net Osvježivač wc školjke <span class="product-qty">5 kom</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-47%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od petka, 16.1. do subote, 17.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.59€</div>
-<div class="price-old">2.99€</div>
-<div class="price-unit">0.32€/kom</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">Lidl 1.59€</span><span class="store-price-tag">Plodine 2.39€</span><span class="store-price-tag">KTC 2.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="32">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">DANTE Hrana za pse ili mačke <span class="product-qty">415g</span></div>
-<div class="product-brand">DANTE</div>
-<div class="product-badges"><span class="badge discount">-38%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.49€</div>
-<div class="price-old">0.79€</div>
-<div class="price-unit">0.12€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 0.59€</span><span class="store-price-tag">KTC 0.65€</span><span class="store-price-tag">Lidl 0.89€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="33">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Argeta Pašteta <span class="product-qty">95g</span></div>
-<div class="product-brand">Argeta</div>
-<div class="product-badges"><span class="badge discount">-35%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.29€</div>
-<div class="price-old">1.99€</div>
-<div class="price-unit">1.36€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Plodine 1.69€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="34">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Agragold Šećer kristal <span class="product-qty">1kg</span></div>
-<div class="product-brand">Agragold</div>
-<div class="product-badges"><span class="badge discount">-30%</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.69€</div>
-<div class="price-old">0.99€</div>
-<div class="price-unit">0.07€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="35">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">PIK Kranjska kobasica <span class="product-qty">380g</span></div>
-<div class="product-brand">PIK</div>
-<div class="product-badges"><span class="badge discount">-29%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">4.19€</div>
-<div class="price-unit">0.79€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">KTC 3.25€</span><span class="store-price-tag">Plodine 3.29€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="36">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">VIVIS Svježi krem sir <span class="product-qty">200g</span></div>
-<div class="product-brand">VIVIS</div>
-<div class="product-badges"><span class="badge discount">-24%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.89€</div>
-<div class="price-old">2.49€</div>
-<div class="price-unit">0.95€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Lidl 1.99€</span><span class="store-price-tag">Plodine 2.89€</span><span class="store-price-tag">KTC 3.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="37">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Svježi sir <span class="product-qty">100g</span></div>
-<div class="product-brand">President</div>
-<div class="product-badges"><span class="badge discount">-24%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.29€</div>
-<div class="price-old">0.38€</div>
-<div class="price-unit">0.29€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="38">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">K-Classic Čvrsti jogurt <span class="product-qty">180g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-22%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.29€</div>
-<div class="price-old">0.37€</div>
-<div class="price-unit">0.16€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">KTC 0.29€</span><span class="store-price-tag">Lidl 0.59€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="39">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Soltino Kikiriki <span class="product-qty">500g</span></div>
-<div class="product-brand">Soltino</div>
-<div class="product-badges"><span class="badge discount">-21%</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.49€</div>
-<div class="price-old">3.15€</div>
-<div class="price-unit">0.50€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="40">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Coca-Cola ili Fanta Napitak gazirani <span class="product-qty">4L</span></div>
-<div class="product-brand">Coca-Cola</div>
-<div class="product-badges"><span class="badge discount">-14%</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.99€</div>
-<div class="price-old">4.66€</div>
-<div class="price-unit">0.10€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="41">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Luk crveni <span class="product-qty">1kg</span></div>
-<div class="product-brand">Agrivi</div>
-<div class="product-badges"><span class="badge discount">-11%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do utorka, 20.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.39€</div>
-<div class="price-old">0.44€</div>
-<div class="price-unit">0.04€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 0.75€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="42">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">MEGGLE Kiselo vrhnje <span class="product-qty">850g</span></div>
-<div class="product-brand">MEGGLE</div>
-<div class="product-badges"><span class="badge date">🗓️ Od ponedjeljka, 19.1. do utorka, 20.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.39€</div>
-
-<div class="price-unit">0.40€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="43">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Ribanac tvrdi ribani sir <span class="product-qty">120g</span></div>
-<div class="product-brand">PRESIDENT</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.79€</div>
-
-<div class="price-unit">3.16€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Plodine 4.85€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="44">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">PIK Mortadela <span class="product-qty">300g</span></div>
-<div class="product-brand">PIK</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">4.99€</div>
-
-<div class="price-unit">1.66€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 8.49€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="45">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Zvijezda Masline </div>
-<div class="product-brand">Zvijezda</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do utorka, 20.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.99€</div>
-
-
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 3.29€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="46">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Belje Glatko brašno <span class="product-qty">1kg</span></div>
-<div class="product-brand">Belje</div>
-<div class="product-badges"><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.59€</div>
-
-<div class="price-unit">0.06€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="47">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Podravka Dalmatinska juha <span class="product-qty">40g</span></div>
-<div class="product-brand">Podravka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.75€</div>
-
-<div class="price-unit">1.88€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="48">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Kraš Napolitanke <span class="product-qty">420g</span></div>
-<div class="product-brand">Kraš</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.29€</div>
-
-<div class="price-unit">0.55€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 3.95€</span><span class="store-price-tag">Plodine 4.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="49">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">NIVEA DEZODORANS ILI ROLL ON </div>
-<div class="product-brand">Nivea</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.49€</div>
-
-
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 2.99€</span><span class="store-price-tag">KTC 2.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="50">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">HARMONY Papirnati ručnik <span class="product-qty">2 rolne</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.99€</div>
-
-
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">Konzum 1.99€</span><span class="store-price-tag">Plodine 2.49€</span><span class="store-price-tag">KTC 2.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="51">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Baguette s porcijama od maslaca <span class="product-qty">350g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede, 14.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.69€</div>
-
-<div class="price-unit">0.48€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Lidl 2.59€</span></div>
-</div></div>
-</div>
-</div></div>
-<div class="store-section" data-store="plodine">
-<div class="store-header" style="border-left-color:#e31e24">
-<div class="store-info">
-<h2>🏪 Plodine</h2>
-<div class="store-meta"><span class="freshness fresh">🟢 Katalog od 17.01.</span></div>
-</div>
-<div class="store-count" style="background:#e31e24">21 proizvoda</div>
-</div>
-<div class="products-list">
-<div class="product-item" data-id="52">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Barilla Tjestenina <span class="product-qty">1kg</span></div>
-<div class="product-brand">Barilla</div>
-<div class="product-badges"><span class="badge discount">-51%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.85€</div>
-<div class="price-old">3.79€</div>
-<div class="price-unit">0.19€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="53">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Tjestenina penne rigate ili Fusilli <span class="product-qty">500g</span></div>
-<div class="product-brand">Agnesi</div>
-<div class="product-badges"><span class="badge discount">-41%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.99€</div>
-<div class="price-old">1.69€</div>
-<div class="price-unit">0.20€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">KTC 1.29€</span><span class="store-price-tag">Lidl 1.89€</span><span class="store-price-tag">Konzum 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="54">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Frollini Keksi <span class="product-qty">500g</span></div>
-<div class="product-brand">Biscoletti</div>
-<div class="product-badges"><span class="badge discount">-41%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.29€</div>
-<div class="price-old">2.19€</div>
-<div class="price-unit">0.26€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 1.69€</span></div>
-</div></div>
-</div>
-<div class="product-item stockpile-item" data-id="55">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Perfex Toaletni papir Chamomile <span class="product-qty">10 kom</span></div>
-<div class="product-brand">Perfex</div>
-<div class="product-badges"><span class="badge discount">-40%</span><span class="badge stockpile">📦 Zalihe</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od 26.01. do 27.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.79€</div>
-<div class="price-old">2.99€</div>
-<div class="price-unit">0.18€/kom</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">KTC 2.29€</span><span class="store-price-tag">Konzum 2.49€</span><span class="store-price-tag">Lidl 3.39€</span></div>
-</div><div class="tip-box success">💡 <strong>Preporuka:</strong> Uzmi 5 kom i uštedi <strong>6.00€</strong>!</div></div>
-</div>
-<div class="product-item" data-id="56">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Tjestenina lasagne <span class="product-qty">500g</span></div>
-<div class="product-brand">Barilla</div>
-<div class="product-badges"><span class="badge discount">-31%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">4.35€</div>
-<div class="price-unit">0.60€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="57">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Majoneza različite vrste <span class="product-qty">85g</span></div>
-<div class="product-brand">Zvijezda</div>
-<div class="product-badges"><span class="badge discount">-29%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.25€</div>
-<div class="price-unit">1.05€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 1.89€</span><span class="store-price-tag">KTC 1.89€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="58">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Panirani pileći odresci i medaljoni <span class="product-qty">200g</span></div>
-<div class="product-brand">Cekin</div>
-<div class="product-badges"><span class="badge discount">-26%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.89€</div>
-<div class="price-old">3.89€</div>
-<div class="price-unit">1.45€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 2.99€</span><span class="store-price-tag">Konzum 3.18€</span><span class="store-price-tag">KTC 5.69€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="59">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pureća dimljena šunka <span class="product-qty">100g</span></div>
-<div class="product-brand">PIK Vrbovec</div>
-<div class="product-badges"><span class="badge discount">-25%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.49€</div>
-<div class="price-old">1.99€</div>
-<div class="price-unit">1.49€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 1.89€</span><span class="store-price-tag">Konzum 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="60">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Rustini Pšenično Brašno Glatko <span class="product-qty">5kg</span></div>
-<div class="product-brand">Rustini</div>
-<div class="product-badges"><span class="badge discount">-22%</span><span class="badge date">🗓️ Od SRIJEDE 21.01. do 27.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.79€</div>
-<div class="price-old">3.58€</div>
-<div class="price-unit">0.06€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="61">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Svježa tjestenina <span class="product-qty">500g</span></div>
-<div class="product-brand">Voltan</div>
-<div class="product-badges"><span class="badge discount">-18%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.09€</div>
-<div class="price-unit">0.18€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">DM 0.95€</span><span class="store-price-tag">KTC 1.19€</span><span class="store-price-tag">Konzum 1.59€</span><span class="store-price-tag">Lidl 1.79€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="62">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Chio Čipi Čips <span class="product-qty">150g</span></div>
-<div class="product-brand">Chio</div>
-<div class="product-badges"><span class="badge discount">-14%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.89€</div>
-<div class="price-old">2.19€</div>
-<div class="price-unit">1.26€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="63">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Minas Original Mljevena kava <span class="product-qty">1kg</span></div>
-<div class="product-brand">Minas</div>
-<div class="product-badges"><span class="badge discount">-12%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">8.79€</div>
-<div class="price-old">9.99€</div>
-<div class="price-unit">0.88€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="64">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Vrhnje za kuhanje <span class="product-qty">500g</span></div>
-<div class="product-brand">Dukat</div>
-<div class="product-badges"><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.79€</div>
-<div class="price-old">3.09€</div>
-<div class="price-unit">0.56€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="65">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Gouda <span class="product-qty">100g</span></div>
-<div class="product-brand">Bayernland</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.39€</div>
-
-<div class="price-unit">1.39€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="66">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pileći paprikaš <span class="product-qty">100g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-
-<div class="price-unit">0.89€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Lidl 1.09€</span><span class="store-price-tag">KTC 1.39€</span><span class="store-price-tag">Kaufland 1.85€</span><span class="store-price-tag">Konzum 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="67">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Grah bijeli <span class="product-qty">400g</span></div>
-<div class="product-brand">Podravka</div>
-<div class="product-badges"><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.99€</div>
-
-<div class="price-unit">0.25€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="68">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Divella Tjestenina <span class="product-qty">500g</span></div>
-<div class="product-brand">Divella</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.79€</div>
-
-<div class="price-unit">0.16€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 0.94€</span><span class="store-price-tag">Konzum 1.09€</span><span class="store-price-tag">KTC 1.19€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="69">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Nescafe Instant kava <span class="product-qty">200g</span></div>
-<div class="product-brand">Nescafe</div>
-<div class="product-badges"><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">19.90€</div>
-
-<div class="price-unit">9.95€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="70">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Shell Sintetičko motorno ulje </div>
-<div class="product-brand">Shell</div>
-<div class="product-badges"><span class="badge date">🗓️ Od 26.01. do 27.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">41.00€</div>
-
-
-</div>
-</div>
-
-</div>
-<div class="product-item stockpile-item" data-id="71">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Finish Tablete za strojno pranje posuđa <span class="product-qty">100 kom</span></div>
-<div class="product-brand">Finish</div>
-<div class="product-badges"><span class="badge stockpile">📦 Zalihe</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">15.79€</div>
-
-<div class="price-unit">0.16€/kom</div>
-</div>
-</div>
-
-</div>
-<div class="product-item stockpile-item" data-id="72">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Persil Detergent za rublje </div>
-<div class="product-brand">Persil</div>
-<div class="product-badges"><span class="badge stockpile">📦 Zalihe</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">6.29€</div>
-
-
-</div>
-</div>
-
-</div>
-</div></div>
-<div class="store-section" data-store="ktc">
-<div class="store-header" style="border-left-color:#ff6600">
-<div class="store-info">
-<h2>🏪 KTC</h2>
-<div class="store-meta"><span class="freshness fresh">🟢 Katalog od 17.01.</span></div>
-</div>
-<div class="store-count" style="background:#ff6600">15 proizvoda</div>
-</div>
-<div class="products-list">
-<div class="product-item" data-id="73">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Tuna komadi u suncokretovom ulju <span class="product-qty">120g</span></div>
-<div class="product-brand">Rio Mare</div>
-<div class="product-badges"><span class="badge discount">-51%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.95€</div>
-<div class="price-old">3.95€</div>
-<div class="price-unit">1.62€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="74">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Tuna usitnjena <span class="product-qty">160g</span></div>
-<div class="product-brand">Eva</div>
-<div class="product-badges"><span class="badge discount">-37%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.39€</div>
-<div class="price-old">2.19€</div>
-<div class="price-unit">0.87€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 1.59€</span><span class="store-price-tag">Plodine 1.59€</span><span class="store-price-tag">Konzum 1.99€</span><span class="store-price-tag">Lidl 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="75">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Šampon 250 ml ili regenerator za kosu 200 ml Fruct <span class="product-qty">250ml</span></div>
-<div class="product-brand">Fructis</div>
-<div class="product-badges"><span class="badge discount">-28%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.59€</div>
-<div class="price-old">3.59€</div>
-<div class="price-unit">1.04€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 4.49€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="76">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Tuna usitnjena u biljnom ulju 160 g Eva <span class="product-qty">160g</span></div>
-<div class="product-brand">Eva</div>
-<div class="product-badges"><span class="badge discount">-21%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.49€</div>
-<div class="price-old">1.89€</div>
-<div class="price-unit">0.93€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 2.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="77">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Hrenovke Frankfurt 100 g Ala <span class="product-qty">100g</span></div>
-<div class="product-brand">Pavo</div>
-<div class="product-badges"><span class="badge discount">-20%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.39€</div>
-<div class="price-old">0.49€</div>
-<div class="price-unit">0.39€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 0.65€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="78">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Osvježivači za WC školjku Duck </div>
-<div class="product-brand">Duck</div>
-<div class="product-badges"><span class="badge discount">-20%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka 19.1. do 20.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.79€</div>
-<div class="price-old">0.99€</div>
-
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="79">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Rođendanska torta 1 kg <span class="product-qty">1kg</span></div>
-<div class="product-brand">Ledo</div>
-<div class="product-badges"><span class="badge discount">-20%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">15.99€</div>
-<div class="price-old">19.99€</div>
-<div class="price-unit">1.60€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 19.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="80">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Voćni nektar Vindi 2 l <span class="product-qty">2L</span></div>
-<div class="product-brand">Vindi</div>
-<div class="product-badges"><span class="badge discount">-19%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.39€</div>
-<div class="price-old">1.72€</div>
-<div class="price-unit">0.07€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 2.59€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="81">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Nescafe Instant kava 2u1 classic 8g <span class="product-qty">8g</span></div>
-<div class="product-brand">Nescafe</div>
-<div class="product-badges"><span class="badge discount">-17%</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.29€</div>
-<div class="price-old">0.35€</div>
-<div class="price-unit">3.62€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="82">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pašteta Gala 4 x 100 g Gavrilović <span class="product-qty">400g</span></div>
-<div class="product-brand">Gavrilović</div>
-<div class="product-badges"><span class="badge discount">-17%</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.99€</div>
-<div class="price-old">2.39€</div>
-<div class="price-unit">0.50€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="83">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pivo radler Edelmeister 0,5 l <span class="product-qty">0.5L</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-16%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.69€</div>
-<div class="price-old">0.82€</div>
-<div class="price-unit">0.14€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 0.85€</span><span class="store-price-tag">Plodine 1.09€</span><span class="store-price-tag">Konzum 1.35€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="84">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pivo radler 0,5 l <span class="product-qty">0.5L</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-11%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.79€</div>
-<div class="price-old">0.89€</div>
-<div class="price-unit">0.16€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 0.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="85">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Čaj Franck maxi 6 pak 120 g <span class="product-qty">120g</span></div>
-<div class="product-brand">Franck</div>
-<div class="product-badges"><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.99€</div>
-<div class="price-old">3.29€</div>
-<div class="price-unit">2.49€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="86">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Topljeni sir Zdenka 140 g <span class="product-qty">140g</span></div>
-<div class="product-brand">Zdenka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ PONUDA 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.79€</div>
-
-<div class="price-unit">1.28€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">Plodine 1.79€</span><span class="store-price-tag">Kaufland 1.89€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="87">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Minas Original Kava <span class="product-qty">500g</span></div>
-<div class="product-brand">Anamaria</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od srijede do utorka 14.1. - 20.1.2026.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">5.49€</div>
-
-<div class="price-unit">1.10€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 5.99€</span></div>
-</div></div>
-</div>
-</div></div>
-<div class="store-section" data-store="lidl">
-<div class="store-header" style="border-left-color:#0050aa">
-<div class="store-info">
-<h2>🏪 Lidl</h2>
-<div class="store-meta"><span class="freshness fresh">🟢 Katalog od 19.01.</span></div>
-</div>
-<div class="store-count" style="background:#0050aa">14 proizvoda</div>
-</div>
-<div class="products-list">
-<div class="product-item" data-id="88">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Ekstra djevičansko maslinovo ulje <span class="product-qty">1L</span></div>
-<div class="product-brand">PRIMADONNA</div>
-<div class="product-badges"><span class="badge discount">-52%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">4.79€</div>
-<div class="price-old">9.99€</div>
-<div class="price-unit">0.48€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 7.99€</span><span class="store-price-tag">Konzum 7.99€</span><span class="store-price-tag">Plodine 7.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="89">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">W5 Sredstvo za pranje posuđa <span class="product-qty">1L</span></div>
-<div class="product-brand">W5</div>
-<div class="product-badges"><span class="badge discount">-50%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od petka, 23.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.79€</div>
-<div class="price-unit">0.09€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Plodine 1.11€</span><span class="store-price-tag">Kaufland 1.29€</span><span class="store-price-tag">Konzum 1.49€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="90">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">TASTINO Toast s maslacem <span class="product-qty">500g</span></div>
-<div class="product-brand">Tastino</div>
-<div class="product-badges"><span class="badge discount">-40%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od petka, 23.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.49€</div>
-<div class="price-unit">0.18€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 1.00€</span><span class="store-price-tag">Plodine 1.45€</span><span class="store-price-tag">Konzum 1.49€</span><span class="store-price-tag">KTC 1.49€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="91">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Domaći krumpir batat <span class="product-qty">1kg</span></div>
-<div class="product-brand"></div>
-<div class="product-badges"><span class="badge discount">-35%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do 21.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.29€</div>
-<div class="price-old">1.99€</div>
-<div class="price-unit">0.13€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">KTC 1.59€</span><span class="store-price-tag">Konzum 1.85€</span><span class="store-price-tag">Plodine 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="92">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">PIKOK Pikant salama <span class="product-qty">100g</span></div>
-<div class="product-brand">PIKOK</div>
-<div class="product-badges"><span class="badge discount">-31%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od četvrtka, 22.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-<div class="price-old">1.29€</div>
-<div class="price-unit">0.89€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Plodine 1.19€</span><span class="store-price-tag">Kaufland 1.89€</span><span class="store-price-tag">Konzum 1.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="93">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">SWEET CORNER Voćni bomboni <span class="product-qty">300g</span></div>
-<div class="product-brand">Sweet Corner</div>
-<div class="product-badges"><span class="badge discount">-30%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od petka, 23.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.25€</div>
-<div class="price-old">1.79€</div>
-<div class="price-unit">0.42€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="94">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">W5 Sredstvo za uklanjanje kamenca <span class="product-qty">750ml</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-30%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.39€</div>
-<div class="price-old">1.99€</div>
-<div class="price-unit">0.19€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 1.75€</span><span class="store-price-tag">Kaufland 2.29€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="95">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Svježe juneće mljeveno meso <span class="product-qty">450g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge discount">-30%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">3.79€</div>
-<div class="price-old">5.39€</div>
-<div class="price-unit">0.84€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Konzum 5.99€</span><span class="store-price-tag">KTC 5.99€</span><span class="store-price-tag">Plodine 5.99€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="96">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Riža dugog zrna <span class="product-qty">1kg</span></div>
-<div class="product-brand">Golden Sun</div>
-<div class="product-badges"><span class="badge discount">-29%</span><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od četvrtka, 22.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.49€</div>
-<div class="price-old">2.09€</div>
-<div class="price-unit">0.15€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Kaufland 2.29€</span><span class="store-price-tag">Konzum 3.19€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="97">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Pašteta <span class="product-qty">95g</span></div>
-<div class="product-brand">Podravka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">📅 17.01.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">0.89€</div>
-
-<div class="price-unit">0.94€/100g</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag best-price">Plodine 0.89€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="98">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">PODRAVKA Vegeta <span class="product-qty">250g</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge date">🗓️ Od petka, 23.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">2.19€</div>
-
-<div class="price-unit">0.88€/100g</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="99">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Cherry rajčica <span class="product-qty">425ml</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge best">⭐ Najjeftiniji</span><span class="badge date">🗓️ Od ponedjeljka, 19.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.19€</div>
+    <h1>🛒 SmartCart v12</h1>
+    <p class="version">✨ ASISTENT ZA DOMAĆICU - KOMPLETAN SUSTAV</p>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-val">{total_products}</div>
+            <div class="stat-lbl">Proizvoda</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" style="color:#2ecc71">{total_savings:.2f}€</div>
+            <div class="stat-lbl">Ušteda</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">{len(by_store)}</div>
+            <div class="stat-lbl">Trgovina</div>
+        </div>
+    </div>
+</div>
+
+<div class="filters-bar">
+    <div class="filter-group">
+        <label>🏪 Trgovina</label>
+        <select class="filter-select" id="storeFilter" onchange="filterStore(this.value)">
+            <option value="SVE">Sve trgovine</option>
+            <option value="DM">DM</option>
+            <option value="KTC">KTC</option>
+            <option value="Kaufland">Kaufland</option>
+            <option value="Konzum">Konzum</option>
+            <option value="Lidl">Lidl</option>
+            <option value="Plodine">Plodine</option>
+        </select>
+    </div>
+    <div class="filter-group" style="flex:0.7">
+        <label>&nbsp;</label>
+        <button class="btn-filter stockpile" onclick="showStockpile()">
+            💚 ZA ZALIHE
+        </button>
+    </div>
+</div>
+
+<div class="category-bar">
+    <div class="category-chips">
+        <div class="cat-chip cat-sve active" data-category="SVE" onclick="filterCategory('SVE')">
+            📋 Sve <span class="chip-count">85</span>
+        </div>
+        <div class="cat-chip cat-meso" data-category="MESO" onclick="filterCategory('MESO')">
+            🥩 Meso <span class="chip-count">0</span>
+        </div>
+        <div class="cat-chip cat-mlijecno" data-category="MLIJEČNO" onclick="filterCategory('MLIJEČNO')">
+            🥛 Mliječno <span class="chip-count">0</span>
+        </div>
+        <div class="cat-chip cat-napici" data-category="NAPICI" onclick="filterCategory('NAPICI')">
+            ☕ Napici <span class="chip-count">0</span>
+        </div>
+        <div class="cat-chip cat-higijena" data-category="HIGIJENA" onclick="filterCategory('HIGIJENA')">
+            🧼 Higijena <span class="chip-count">0</span>
+        </div>
+        <div class="cat-chip cat-osnovne_namirnice" data-category="OSNOVNE_NAMIRNICE" onclick="filterCategory('OSNOVNE_NAMIRNICE')">
+            🌾 Namirnice <span class="chip-count">0</span>
+        </div>
+        <div class="cat-chip cat-voce_povrce" data-category="VOĆE_POVRĆE" onclick="filterCategory('VOĆE_POVRĆE')">
+            🍎 Voće/Povrće <span class="chip-count">0</span>
+        </div>
+        <div class="cat-chip cat-ostalo" data-category="OSTALO" onclick="filterCategory('OSTALO')">
+            🏠 Ostalo <span class="chip-count">0</span>
+        </div>
+    </div>
+</div>
+
+<div id="storesContainer"></div>
 
-<div class="price-unit">0.28€/100ml</div>
-</div>
-</div>
-<div class="product-details"><div class="detail-section">
-<div class="detail-section-title">📍 Druge trgovine</div>
-<div class="other-stores"><span class="store-price-tag">Plodine 1.49€</span></div>
-</div></div>
-</div>
-<div class="product-item" data-id="100">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">NESTEA Ledeni čaj <span class="product-qty">1.5L</span></div>
-<div class="product-brand">Privatna marka</div>
-<div class="product-badges"><span class="badge date">🗓️ Od petka, 23.1. do 25.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">1.45€</div>
-
-<div class="price-unit">0.10€/100ml</div>
-</div>
-</div>
-
-</div>
-<div class="product-item" data-id="101">
-<div class="product-main">
-<div class="product-left">
-<div class="product-checkbox" onclick="toggleCheck(this)"></div>
-<div class="product-info">
-<div class="product-name">Extra djevičansko maslinovo ulje <span class="product-qty">500ml</span></div>
-<div class="product-brand">ENGARDO</div>
-<div class="product-badges"><span class="badge date">🗓️ Od ponedjeljka, 19.1.</span></div>
-</div>
-</div>
-<div class="product-price">
-<div class="price-current">6.29€</div>
-
-<div class="price-unit">1.26€/100ml</div>
-</div>
-</div>
-
-</div>
-</div></div>
 <div class="footer">
-<p>🛒 SmartCart izvještaj • Verzija 11.1</p>
-<p>Podaci iz kataloga trgovina • Cijene i dostupnost provjerite u trgovini</p>
-<div class="legend">
-<span>🟢 Svježe</span>
-<span>🟡 Starije</span>
-<span>⭐ Najbolja cijena</span>
-<span>📦 Za zalihe</span>
+    <p>🛒 SmartCart v12 - Asistent za domaćicu</p>
+    <p>85 proizvoda • 135.41€ uštede • 9 stockpile (37.00€)</p>
+    <div class="version-tag">📅 Datumi • 🏪 Filteri • 💚 Stockpile • 🎯 Kategorije • 🎨 Buffet sistem</div>
 </div>
+
 </div>
+
 <div class="bottom-bar">
-<button class="btn primary" onclick="toggleFilter()">
-✓ ZA KUPITI <span class="count" id="checkedCount">0</span>
-</button>
+    <button class="btn primary" onclick="toggleFilter()">
+        ✓ ZA KUPITI <span class="count" id="checkedCount">0</span>
+    </button>
 </div>
+
 <script>
-document.addEventListener('DOMContentLoaded',function(){loadState();updateCount()});
-function toggleCheck(el){el.classList.toggle('checked');el.closest('.product-item').classList.toggle('checked');saveState();updateCount()}
-function updateCount(){document.getElementById('checkedCount').textContent=document.querySelectorAll('.product-checkbox.checked').length}
-function filterStore(store){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));document.querySelector('.chip[data-store="'+store+'"]').classList.add('active');document.querySelectorAll('.store-section').forEach(s=>{s.classList.toggle('hidden',store!=='all'&&s.dataset.store!==store)})}
-function toggleFilter(){const btn=event.target.closest('.btn'),f=btn.dataset.filtered==='true';document.querySelectorAll('.product-item').forEach(p=>{p.style.display=f?'':p.querySelector('.product-checkbox.checked')?'':'none'});document.querySelectorAll('.store-section').forEach(s=>{if(!f){const has=Array.from(s.querySelectorAll('.product-item')).some(p=>p.style.display!=='none');s.classList.toggle('hidden',!has)}else{s.classList.remove('hidden')}});btn.innerHTML=f?'✓ ZA KUPITI <span class="count" id="checkedCount">'+document.querySelectorAll('.product-checkbox.checked').length+'</span>':'👁 PRIKAŽI SVE';btn.dataset.filtered=f?'false':'true'}
-function saveState(){const c=[];document.querySelectorAll('.product-item').forEach(p=>{if(p.querySelector('.product-checkbox.checked'))c.push(p.dataset.id)});localStorage.setItem('smartcart_checked',JSON.stringify(c))}
-function loadState(){try{JSON.parse(localStorage.getItem('smartcart_checked')||'[]').forEach(id=>{const i=document.querySelector('.product-item[data-id="'+id+'"]');if(i){i.classList.add('checked');i.querySelector('.product-checkbox').classList.add('checked')}})}catch(e){}}
+const DEMO_DATA = {"Kaufland": [{"search_term": "Čajna kobasica (PIK)", "search_name": "Čajna kobasica", "product_id": 186, "product_name": "Kulen ili Čajna kobasica", "brand": "PIK", "unit": "100 g", "store": "Kaufland", "action_price": 1.49, "regular_price": 14.94, "discount_percent": 90.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Trajno mlijeko (Dukat) [1L]", "search_name": "Trajno mlijeko", "product_id": 171, "product_name": "Trajno mlijeko", "brand": "DUKAT", "unit": "1 L", "store": "Kaufland", "action_price": 0.93, "regular_price": 2.5, "discount_percent": 63.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Maslac 250g", "search_name": "Maslac 250g", "product_id": 168, "product_name": "Maslac", "brand": "Privatna marka", "unit": "250 g", "store": "Kaufland", "action_price": 1.0, "regular_price": 2.5, "discount_percent": 60.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina špageti [500g]", "search_name": "Tjestenina špageti", "product_id": 30, "product_name": "Barilla Tjestenina Fusilli N°9", "brand": "Barilla", "unit": "500 g", "store": "Kaufland", "action_price": 0.94, "regular_price": 1.95, "discount_percent": 52.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1. do utorka, 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 103, "product_name": "Domestos osvježivač prostora", "brand": "Domestos", "unit": "3x55 g", "store": "Kaufland", "action_price": 2.99, "regular_price": 5.99, "discount_percent": 50.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Rajčica svježa", "search_name": "Rajčica svježa", "product_id": 206, "product_name": "Cirio Pasirana rajčica", "brand": "Cirio", "unit": "700 g", "store": "Kaufland", "action_price": 1.39, "regular_price": 2.79, "discount_percent": 50.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Paprika", "search_name": "Paprika", "product_id": 131, "product_name": "Paprika babura", "brand": "Privatna marka", "unit": "1 kg", "store": "Kaufland", "action_price": 1.99, "regular_price": 3.99, "discount_percent": 50.0, "category": "VOĆE_POVRĆE", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1. do subote 17.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 276, "product_name": "WC Net Osvježivač wc školjke", "brand": "Privatna marka", "unit": "5 kom", "store": "Kaufland", "action_price": 1.59, "regular_price": 2.99, "discount_percent": 47.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "Od petka, 16.1. do subote, 17.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Gel za tuširanje [500ml]", "search_name": "Gel za tuširanje", "product_id": 223, "product_name": "PALMOLIVE Gel za tuširanje", "brand": "Palmolive", "unit": "250 ml", "store": "Kaufland", "action_price": 1.49, "regular_price": 2.69, "discount_percent": 45.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 4, "stockpile_reason": "Odlična akcija!", "stockpile_savings": 4.8}, {"search_term": "Paprika", "search_name": "Paprika", "product_id": 288, "product_name": "Taverna Paprika pečena", "brand": "Taverna", "unit": "680 g", "store": "Kaufland", "action_price": 1.99, "regular_price": 3.29, "discount_percent": 40.0, "category": "VOĆE_POVRĆE", "catalog_date": "2026-01-17", "valid_from": "Od ponedjeljka, 19.1. do utorka, 20.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Hrana za mačke", "search_name": "Hrana za mačke", "product_id": 238, "product_name": "DANTE Hrana za pse ili mačke", "brand": "DANTE", "unit": "415 g", "store": "Kaufland", "action_price": 0.49, "regular_price": 0.79, "discount_percent": 38.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Sir trapist (Zdenka)", "search_name": "Sir trapist", "product_id": 193, "product_name": "ZDENKA Rezani sirevi", "brand": "ZDENKA", "unit": "150 g", "store": "Kaufland", "action_price": 1.89, "regular_price": 2.89, "discount_percent": 35.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Salama", "search_name": "Salama", "product_id": 39, "product_name": "Salama", "brand": "Privatna marka", "unit": "240 G", "store": "Kaufland", "action_price": 1.89, "regular_price": 2.89, "discount_percent": 35.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pašteta (Argeta)", "search_name": "Pašteta", "product_id": 203, "product_name": "Argeta Pašteta", "brand": "Argeta", "unit": "95 g", "store": "Kaufland", "action_price": 1.29, "regular_price": 1.99, "discount_percent": 35.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pileći file svježi", "search_name": "Pileći file svježi", "product_id": 151, "product_name": "Pileći batak", "brand": "Privatna marka", "unit": "1 kg", "store": "Kaufland", "action_price": 2.59, "regular_price": 3.99, "discount_percent": 35.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pileći file svježi", "search_name": "Pileći file svježi", "product_id": 255, "product_name": "Pileći file od prsa", "brand": "Privatna marka", "unit": "1 kg", "store": "Kaufland", "action_price": 5.49, "regular_price": 8.49, "discount_percent": 35.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "Od petka, 16.1. do subote, 17.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Sredstvo za čišćenje podova", "search_name": "Sredstvo za čišćenje podova", "product_id": 236, "product_name": "ARF Sredstvo za čišćenje stakla", "brand": "ARF", "unit": "650 ml", "store": "Kaufland", "action_price": 1.29, "regular_price": 1.99, "discount_percent": 35.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Regenerator za kosu", "search_name": "Regenerator za kosu", "product_id": 224, "product_name": "SYOSS Šampon ili regenerator", "brand": "Syoss", "unit": "440 ml", "store": "Kaufland", "action_price": 4.49, "regular_price": 6.49, "discount_percent": 31.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 2, "stockpile_reason": "Preporučeno", "stockpile_savings": 4.0}, {"search_term": "Šećer kristal [1kg]", "search_name": "Šećer kristal", "product_id": 205, "product_name": "Agragold Šećer kristal", "brand": "Agragold", "unit": "1 kg", "store": "Kaufland", "action_price": 0.69, "regular_price": 0.99, "discount_percent": 30.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Hrana za mačke", "search_name": "Hrana za mačke", "product_id": 239, "product_name": "GOURMET Hrana za mačke", "brand": "GOURMET", "unit": "6x50 g ili 4x85 g", "store": "Kaufland", "action_price": 2.15, "regular_price": 3.09, "discount_percent": 30.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "Od srijede, 14.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}], "Konzum": [{"search_term": "Maslac 250g", "search_name": "Maslac 250g", "product_id": 423, "product_name": "Alpinetta Maslac", "brand": "Privatna marka", "unit": "250g", "store": "Konzum", "action_price": 1.49, "regular_price": 2.99, "discount_percent": 50.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 403, "product_name": "SVJEŽI FILET LOSOSA", "brand": "Privatna marka", "unit": "4x125g, 1kg", "store": "Konzum", "action_price": 8.99, "regular_price": 17.98, "discount_percent": 50.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Papirnati ručnici 4 role", "search_name": "Papirnati ručnici 4 role", "product_id": 566, "product_name": "PERFEX PROFESSIONAL PAPIRNATI RUČNIK", "brand": "Perfex", "unit": "3 sloja, 1 rola", "store": "Konzum", "action_price": 1.99, "regular_price": 3.99, "discount_percent": 50.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Šunka narezana (Pik)", "search_name": "Šunka narezana", "product_id": 469, "product_name": "ŠUNKA KUHANA U OVITKU narezak", "brand": "Pik", "unit": "125 g", "store": "Konzum", "action_price": 1.99, "regular_price": 3.69, "discount_percent": 46.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Sir Gouda (Z'bregov)", "search_name": "Sir Gouda", "product_id": 426, "product_name": "'Z Bregov Svježi Sir u slanoj maramici", "brand": "Privatna marka", "unit": "600g", "store": "Konzum", "action_price": 3.59, "regular_price": 5.98, "discount_percent": 40.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Banane", "search_name": "Banane", "product_id": 321, "product_name": "Choco Banane XXL", "brand": "Privatna marka", "unit": "510g", "store": "Konzum", "action_price": 2.99, "regular_price": 4.99, "discount_percent": 40.0, "category": "VOĆE_POVRĆE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pileći file svježi", "search_name": "Pileći file svježi", "product_id": 380, "product_name": "PILEĆI BATAK", "brand": "Vindija", "unit": "1kg", "store": "Konzum", "action_price": 2.59, "regular_price": 4.19, "discount_percent": 38.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Gouda sir rinfuz", "search_name": "Gouda sir rinfuz", "product_id": 465, "product_name": "GOUDA BAYREUTH SIR polutvrdi", "brand": "Privatna marka", "unit": "1 kg", "store": "Konzum", "action_price": 4.49, "regular_price": 6.99, "discount_percent": 36.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Riža bijela [1kg]", "search_name": "Riža bijela", "product_id": 470, "product_name": "Gallo Riža Arborio", "brand": "Gran Gallo", "unit": "1 kg", "store": "Konzum", "action_price": 3.19, "regular_price": 4.99, "discount_percent": 36.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 484, "product_name": "Talianetta Tjestenina", "brand": "Podravka", "unit": "145 g - 160 g", "store": "Konzum", "action_price": 1.59, "regular_price": 2.49, "discount_percent": 36.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Deterdžent za suđe (Jar)", "search_name": "Deterdžent za suđe", "product_id": 567, "product_name": "JAR DETERDŽENT za ručno pranje posuđa, lemon", "brand": "Jar", "unit": "900ml", "store": "Konzum", "action_price": 2.99, "regular_price": 4.65, "discount_percent": 36.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 3, "stockpile_reason": "Velika ušteda", "stockpile_savings": 4.98}, {"search_term": "Sredstvo za čišćenje podova", "search_name": "Sredstvo za čišćenje podova", "product_id": 577, "product_name": "Sanytol sredstvo za čišćenje, odabrane vrste, 500ml", "brand": "Sanytol", "unit": "500ml", "store": "Konzum", "action_price": 2.39, "regular_price": 3.65, "discount_percent": 35.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Sredstvo za čišćenje podova", "search_name": "Sredstvo za čišćenje podova", "product_id": 579, "product_name": "Super Jon sredstvo za čišćenje stakla, odabrane vrste, 650ml", "brand": "Super Jon", "unit": "650ml", "store": "Konzum", "action_price": 1.49, "regular_price": 2.29, "discount_percent": 35.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pašteta od tune", "search_name": "Pašteta od tune", "product_id": 488, "product_name": "PIKETA PAŠTETA odabrane vrste, 95g", "brand": "Piketa", "unit": "95g", "store": "Konzum", "action_price": 0.79, "regular_price": 1.19, "discount_percent": 34.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Paprika", "search_name": "Paprika", "product_id": 325, "product_name": "Lay's Čips Slani, Paprika", "brand": "Lay's", "unit": "200g", "store": "Konzum", "action_price": 0.99, "regular_price": 1.49, "discount_percent": 34.0, "category": "VOĆE_POVRĆE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Gel za tuširanje [500ml]", "search_name": "Gel za tuširanje", "product_id": 347, "product_name": "PALMOLIVE GEL ZA TUŠIRANJE", "brand": "Palmolive", "unit": "750 ml", "store": "Konzum", "action_price": 3.99, "regular_price": 5.99, "discount_percent": 33.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 2, "stockpile_reason": "Preporučeno", "stockpile_savings": 4.0}, {"search_term": "Hrana za mačke", "search_name": "Hrana za mačke", "product_id": 560, "product_name": "PEDIGREE HRANA ZA PSE odabrane vrste", "brand": "Pedigree", "unit": "2.6 kg", "store": "Konzum", "action_price": 9.49, "regular_price": 13.99, "discount_percent": 32.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina špageti [500g]", "search_name": "Tjestenina špageti", "product_id": 327, "product_name": "Pasta Zara tjestenina", "brand": "Privatna marka", "unit": "625g", "store": "Konzum", "action_price": 1.09, "regular_price": 1.59, "discount_percent": 31.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Masline (Zvijezda)", "search_name": "Masline", "product_id": 489, "product_name": "ZVIJEZDA MASLINE odabrane vrste, 340g-400g", "brand": "Zvijezda", "unit": "340g-400g", "store": "Konzum", "action_price": 3.29, "regular_price": 4.69, "discount_percent": 30.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Hrana za mačke", "search_name": "Hrana za mačke", "product_id": 562, "product_name": "WHISKAS HRANA ZA MAČKE odabrane vrste", "brand": "Whiskas", "unit": "1.4 kg", "store": "Konzum", "action_price": 6.99, "regular_price": 9.99, "discount_percent": 30.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}], "Plodine": [{"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 1204, "product_name": "Barilla Tjestenina", "brand": "Barilla", "unit": "1 kg", "store": "Plodine", "action_price": 1.85, "regular_price": 3.79, "discount_percent": 51.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Maslac 250g", "search_name": "Maslac 250g", "product_id": 1188, "product_name": "Doline Maslac", "brand": "Doline", "unit": "250 g", "store": "Plodine", "action_price": 1.45, "regular_price": 2.9, "discount_percent": 50.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Rajčica svježa", "search_name": "Rajčica svježa", "product_id": 900, "product_name": "Cherry rajčica", "brand": "Privatna marka", "unit": "425 ml", "store": "Plodine", "action_price": 1.49, "regular_price": 2.99, "discount_percent": 50.0, "category": "VOĆE_POVRĆE", "catalog_date": "2026-01-17", "valid_from": "Od petka do nedjelje 23.01. do 25.01.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina špageti [500g]", "search_name": "Tjestenina špageti", "product_id": 1117, "product_name": "Tjestenina penne rigate ili Fusilli", "brand": "Agnesi", "unit": "500 g", "store": "Plodine", "action_price": 0.99, "regular_price": 1.69, "discount_percent": 41.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Keksi", "search_name": "Keksi", "product_id": 1096, "product_name": "Frollini Keksi", "brand": "Biscoletti", "unit": "500 g", "store": "Plodine", "action_price": 1.29, "regular_price": 2.19, "discount_percent": 41.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Toaletni papir troslojni 24 role", "search_name": "Toaletni papir troslojni 24 role", "product_id": 1287, "product_name": "Perfex Toaletni papir Chamomile", "brand": "Perfex", "unit": "10 rola", "store": "Plodine", "action_price": 1.79, "regular_price": 2.99, "discount_percent": 40.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "Od 26.01. do 27.01.", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 4, "stockpile_reason": "Odlična akcija!", "stockpile_savings": 4.8}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 809, "product_name": "Svježi odojak", "brand": "Privatna marka", "unit": "cca 2.3 kg", "store": "Plodine", "action_price": 4.89, "regular_price": 7.99, "discount_percent": 39.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tuna u salamuri [160g]", "search_name": "Tuna u salamuri", "product_id": 1085, "product_name": "Tuna salata", "brand": "Barba", "unit": "160 g", "store": "Plodine", "action_price": 1.59, "regular_price": 2.46, "discount_percent": 35.0, "category": "VOĆE_POVRĆE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 1053, "product_name": "Osvježivač prostora", "brand": "BIS", "unit": "400 ml", "store": "Plodine", "action_price": 2.89, "regular_price": 4.19, "discount_percent": 31.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "21.01.-03.02.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina špageti [500g]", "search_name": "Tjestenina špageti", "product_id": 1115, "product_name": "Tjestenina lasagne", "brand": "Barilla", "unit": "500 g", "store": "Plodine", "action_price": 2.99, "regular_price": 4.35, "discount_percent": 31.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi sir [500g]", "search_name": "Svježi sir", "product_id": 1164, "product_name": "Svježi leskovački ćevapčići", "brand": "Anton", "unit": "450 g", "store": "Plodine", "action_price": 3.49, "regular_price": 4.99, "discount_percent": 30.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Majoneza (Zvijezda)", "search_name": "Majoneza", "product_id": 1200, "product_name": "Majoneza različite vrste", "brand": "Zvijezda", "unit": "85 g", "store": "Plodine", "action_price": 0.89, "regular_price": 1.25, "discount_percent": 29.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pileći file svježi", "search_name": "Pileći file svježi", "product_id": 1154, "product_name": "Panirani pileći odresci i medaljoni", "brand": "Cekin", "unit": "200 g", "store": "Plodine", "action_price": 2.89, "regular_price": 3.89, "discount_percent": 26.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Salama", "search_name": "Salama", "product_id": 1166, "product_name": "Sendviče salama", "brand": "Pre Vekovec", "unit": "100 g", "store": "Plodine", "action_price": 1.19, "regular_price": 1.59, "discount_percent": 25.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Šunka narezana (Pik)", "search_name": "Šunka narezana", "product_id": 1169, "product_name": "Pureća dimljena šunka", "brand": "PIK Vrbovec", "unit": "100 g", "store": "Plodine", "action_price": 1.49, "regular_price": 1.99, "discount_percent": 25.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Mljeveno meso miješano", "search_name": "Mljeveno meso miješano", "product_id": 1161, "product_name": "Svježe miješano mljeveno meso", "brand": "PIK Vrbovec", "unit": "950 g", "store": "Plodine", "action_price": 5.99, "regular_price": 7.99, "discount_percent": 25.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 1157, "product_name": "Svježi teleći vrat", "brand": "Privatna marka", "unit": "1 kg", "store": "Plodine", "action_price": 8.29, "regular_price": 10.99, "discount_percent": 25.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Sir trapist (Zdenka)", "search_name": "Sir trapist", "product_id": 1191, "product_name": "Topljeni sir", "brand": "Zdenka", "unit": "140 g", "store": "Plodine", "action_price": 1.79, "regular_price": 2.29, "discount_percent": 22.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi sir [500g]", "search_name": "Svježi sir", "product_id": 1162, "product_name": "Svježi svinjski odresci filea", "brand": "Kometa", "unit": "500 g", "store": "Plodine", "action_price": 4.69, "regular_price": 5.99, "discount_percent": 22.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Kranjska kobasica", "search_name": "Kranjska kobasica", "product_id": 1176, "product_name": "Gavrilović Kranjska kobasica", "brand": "Gavrilović", "unit": "300 g", "store": "Plodine", "action_price": 3.29, "regular_price": 4.2, "discount_percent": 22.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}], "KTC": [{"search_term": "Tuna (Rio Mare)", "search_name": "Tuna", "product_id": 665, "product_name": "Tuna komadi u suncokretovom ulju", "brand": "Rio Mare", "unit": "120 g", "store": "KTC", "action_price": 1.95, "regular_price": 3.95, "discount_percent": 51.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 797, "product_name": "Osvježivač za WC školjku Bref 2 x 50 g", "brand": "Bref", "unit": "2 x 50 g", "store": "KTC", "action_price": 3.99, "regular_price": 7.99, "discount_percent": 50.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Svježi čevapčići", "search_name": "Svježi čevapčići", "product_id": 755, "product_name": "Punjenje za osvježivač zraka Airwick 19 ml lavanda ili anti tabacco", "brand": "Airwick", "unit": "19 ml", "store": "KTC", "action_price": 2.99, "regular_price": 5.49, "discount_percent": 46.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "Od 2.1. do 31.1.2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Dezodorans", "search_name": "Dezodorans", "product_id": 770, "product_name": "Dezodorans Borotalco roll on 50 ml sprej 150 ml", "brand": "Borotalco", "unit": "50 ml", "store": "KTC", "action_price": 2.99, "regular_price": 5.39, "discount_percent": 45.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina špageti [500g]", "search_name": "Tjestenina špageti", "product_id": 706, "product_name": "Tjestenina 400 g Ragusa", "brand": "Ragusa", "unit": "400 g", "store": "KTC", "action_price": 1.19, "regular_price": 2.06, "discount_percent": 42.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14. 1. - 20. 1. 2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 764, "product_name": "Pasta za zube Parodontax 75 ml", "brand": "Parodontax", "unit": "75 ml", "store": "KTC", "action_price": 3.49, "regular_price": 5.99, "discount_percent": 42.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 4, "stockpile_reason": "Odlična akcija!", "stockpile_savings": 10.0}, {"search_term": "Tjestenina špageti [500g]", "search_name": "Tjestenina špageti", "product_id": 705, "product_name": "Tjestenina 400 g Marodi", "brand": "Marodi", "unit": "400 g", "store": "KTC", "action_price": 1.19, "regular_price": 1.91, "discount_percent": 38.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14. 1. - 20. 1. 2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tuna u salamuri [160g]", "search_name": "Tuna u salamuri", "product_id": 664, "product_name": "Tuna usitnjena", "brand": "Eva", "unit": "160 g", "store": "KTC", "action_price": 1.39, "regular_price": 2.19, "discount_percent": 37.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 765, "product_name": "Pasta za zube Kalodont 125 ml", "brand": "Kalodont", "unit": "125 ml", "store": "KTC", "action_price": 1.89, "regular_price": 2.89, "discount_percent": 35.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 2, "stockpile_reason": "Preporučeno", "stockpile_savings": 2.0}, {"search_term": "Omekšivač 2L (Lenor)", "search_name": "Omekšivač 2L", "product_id": 784, "product_name": "Omekšivač za rublje Lenor", "brand": "Lenor", "unit": "1.24 l", "store": "KTC", "action_price": 1.49, "regular_price": 2.2, "discount_percent": 32.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 2, "stockpile_reason": "Preporučeno", "stockpile_savings": 1.42}, {"search_term": "Hrana za mačke", "search_name": "Hrana za mačke", "product_id": 800, "product_name": "Hrana za mačke Friskies", "brand": "Friskies", "unit": "1.5 kg", "store": "KTC", "action_price": 4.59, "regular_price": 6.69, "discount_percent": 31.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Regenerator za kosu", "search_name": "Regenerator za kosu", "product_id": 768, "product_name": "Šampon 250 ml ili regenerator za kosu 200 ml Fructis", "brand": "Fructis", "unit": "250 ml / 200 ml", "store": "KTC", "action_price": 2.59, "regular_price": 3.59, "discount_percent": 28.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": true, "stockpile_qty": 1, "stockpile_reason": "Dobra cijena", "stockpile_savings": 1.0}, {"search_term": "Hrana za mačke", "search_name": "Hrana za mačke", "product_id": 801, "product_name": "Hrana za mačke Whiskas", "brand": "Whiskas", "unit": "85 g", "store": "KTC", "action_price": 0.65, "regular_price": 0.89, "discount_percent": 27.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Dezodorans", "search_name": "Dezodorans", "product_id": 769, "product_name": "Dezodorans L'Oreal Men Expert za muškarce sprej 150 ml", "brand": "L'Oreal", "unit": "150 ml", "store": "KTC", "action_price": 3.99, "regular_price": 5.49, "discount_percent": 27.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Pileći file svježi", "search_name": "Pileći file svježi", "product_id": 714, "product_name": "Oyakata Japanese Chicken Teriyaki", "brand": "Oyakata", "unit": null, "store": "KTC", "action_price": 1.39, "regular_price": 1.89, "discount_percent": 26.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14. 1. - 20. 1. 2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Jogurt", "search_name": "Jogurt", "product_id": 682, "product_name": "Voćni jogurt 160 g", "brand": "Privatna marka", "unit": "160 g", "store": "KTC", "action_price": 0.29, "regular_price": 0.39, "discount_percent": 26.0, "category": "MLIJEČNO", "catalog_date": "2026-01-17", "valid_from": "Od ponedjeljka 19.1. do 20.1.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 707, "product_name": "Tjestenina 1 kg Mlinotest", "brand": "Privatna marka", "unit": "1 kg", "store": "KTC", "action_price": 1.29, "regular_price": 1.68, "discount_percent": 23.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14. 1. - 20. 1. 2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Čajna kobasica (PIK)", "search_name": "Čajna kobasica", "product_id": 639, "product_name": "Čajna kobasica ili kulen", "brand": "PIK", "unit": "1 kg", "store": "KTC", "action_price": 14.99, "regular_price": 18.99, "discount_percent": 21.0, "category": "MESO", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Voćni sok 100% [1L]", "search_name": "Voćni sok 100%", "product_id": 740, "product_name": "Voćni sok To 1 l", "brand": "Privatna marka", "unit": "1 l", "store": "KTC", "action_price": 1.49, "regular_price": 1.89, "discount_percent": 21.0, "category": "NAPICI", "catalog_date": "2026-01-17", "valid_from": "PONUDA 14.1. - 20.1.2026.", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tuna u salamuri [160g]", "search_name": "Tuna u salamuri", "product_id": 658, "product_name": "Tuna usitnjena u biljnom ulju 160 g Eva", "brand": "Eva", "unit": "160 g", "store": "KTC", "action_price": 1.49, "regular_price": 1.89, "discount_percent": 21.0, "category": "OSTALO", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}], "Lidl": [{"search_term": "Salama", "search_name": "Salama", "product_id": 860, "product_name": "Salama Milano", "brand": "Privatna marka", "unit": "100 g", "store": "Lidl", "action_price": 1.89, "regular_price": 1.79, "discount_percent": 0, "category": "MESO", "catalog_date": "2026-01-19", "valid_from": "Od ponedjeljka, 19.1.", "valid_until": "2026-01-26", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Salama", "search_name": "Salama", "product_id": 867, "product_name": "Ljuta salama Napoli", "brand": "Privatna marka", "unit": "320 g", "store": "Lidl", "action_price": 3.39, "regular_price": 0.0, "discount_percent": 0, "category": "MESO", "catalog_date": "2026-01-19", "valid_from": "Od ponedjeljka, 19.1.", "valid_until": "2026-01-26", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}], "DM": [{"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 16, "product_name": "Advanced White pasta za zube Purple, 75ml", "brand": "Colgate", "unit": "75ml", "store": "DM", "action_price": 2.5, "regular_price": 3.15, "discount_percent": 21.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Tjestenina penne", "search_name": "Tjestenina penne", "product_id": 11, "product_name": "Dontodent antibakterijska pasta za zube 125 ml", "brand": "Dontodent", "unit": "125 ml", "store": "DM", "action_price": 0.95, "regular_price": 1.05, "discount_percent": 10.0, "category": "OSNOVNE_NAMIRNICE", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}, {"search_term": "Deterdžent za suđe (Jar)", "search_name": "Deterdžent za suđe", "product_id": 20, "product_name": "Jar deterdžent za pranje posuđa Lemon, 900ml", "brand": "Jar", "unit": "900ml", "store": "DM", "action_price": 4.2, "regular_price": 4.67, "discount_percent": 10.0, "category": "HIGIJENA", "catalog_date": "2026-01-17", "valid_from": "2026-01-17", "valid_until": "2026-01-24", "is_stockpile": false, "stockpile_qty": 0, "stockpile_reason": "", "stockpile_savings": 0}]};
+
+const STORE_COLORS = {"Kaufland": "#e31e24", "Konzum": "#e31e24", "Lidl": "#0050aa", "Spar": "#00923f", "Interspar": "#00923f", "DM": "#00a0d6", "KTC": "#ff6600", "Plodine": "#e31e24"};
+
+let currentStoreFilter = 'SVE';
+let currentCategoryFilter = 'SVE';
+let showingStockpileOnly = false;
+
+function generateHTML() {
+    const container = document.getElementById('storesContainer');
+    container.innerHTML = '';
+    
+    let totalProducts = 0;
+    const categoryCounts = {
+        'SVE':0,'MESO':0,'MLIJEČNO':0,'NAPICI':0,'HIGIJENA':0,'OSNOVNE_NAMIRNICE':0,'VOĆE_POVRĆE':0,'OSTALO':0
+    };
+    
+    for (const [storeName, products] of Object.entries(DEMO_DATA)) {
+        const storeColor = STORE_COLORS[storeName] || '#3498db';
+        
+        const storeSection = document.createElement('div');
+        storeSection.className = 'store-section';
+        storeSection.dataset.store = storeName.toLowerCase();
+        
+        const storeHeader = `
+            <div class="store-header" style="border-left-color:${storeColor}">
+                <div class="store-info">
+                    <h2>🏪 ${storeName}</h2>
+                </div>
+                <div class="store-count" style="background:${storeColor}">${products.length} proizvoda</div>
+            </div>
+        `;
+        
+        let productsHTML = '<div class="products-list">';
+        
+        products.forEach((p, i) => {
+            const cat = p.category || 'OSTALO';
+            categoryCounts[cat]++;
+            categoryCounts['SVE']++;
+            totalProducts++;
+            
+            const isStockpile = p.is_stockpile || false;
+            const stockpileClass = isStockpile ? 'stockpile' : '';
+            
+            productsHTML += `
+                <div class="product-item ${stockpileClass}" data-category="${cat}" data-store="${storeName.toLowerCase()}" data-id="${storeName}-${i}" data-stockpile="${isStockpile}">
+                    <div class="product-main">
+                        <div class="product-left">
+                            <div class="product-checkbox" onclick="toggleCheck(this)"></div>
+                            <div class="product-info">
+                                <div class="product-name">${p.product_name} ${p.unit ? `<span class="product-qty">${p.unit}</span>` : ''}</div>
+                                ${p.brand ? `<div class="product-brand">${p.brand}</div>` : ''}
+                                <div class="product-badges">
+                                    ${p.discount_percent >= 5 ? `<span class="badge discount">-${p.discount_percent}%</span>` : ''}
+                                    <span class="badge category">${cat}</span>
+                                    ${isStockpile ? '<span class="badge stockpile">💚 ZALIHE</span>' : ''}
+                                </div>
+                                ${p.valid_from ? `<div class="product-dates">📅 Vrijedi: ${p.valid_from} - ${p.valid_until || 'n/a'}</div>` : ''}
+                                ${isStockpile && p.stockpile_qty > 0 ? `
+                                    <div class="stockpile-info">
+                                        💚 ZALIHE: <span class="qty">${p.stockpile_qty} kom</span> • 
+                                        Ušteda: <span class="savings">${p.stockpile_savings.toFixed(2)}€</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="product-price">
+                            <div class="price-current">${p.action_price.toFixed(2)}€</div>
+                            ${p.regular_price && p.regular_price > p.action_price ? 
+                                `<div class="price-old">${p.regular_price.toFixed(2)}€</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        productsHTML += '</div>';
+        storeSection.innerHTML = storeHeader + productsHTML;
+        container.appendChild(storeSection);
+    }
+    
+    for (const [cat, count] of Object.entries(categoryCounts)) {
+        const chip = document.querySelector(`.cat-chip[data-category="${cat}"]`);
+        if (chip) chip.querySelector('.chip-count').textContent = count;
+    }
+}
+
+function filterCategory(category) {
+    currentCategoryFilter = category;
+    showingStockpileOnly = false;
+    
+    document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
+    document.querySelector(`.cat-chip[data-category="${category}"]`).classList.add('active');
+    
+    applyFilters();
+}
+
+function filterStore(store) {
+    currentStoreFilter = store;
+    applyFilters();
+}
+
+function showStockpile() {
+    showingStockpileOnly = true;
+    currentCategoryFilter = 'SVE';
+    currentStoreFilter = 'SVE';
+    
+    document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
+    document.querySelector('.cat-chip[data-category="SVE"]').classList.add('active');
+    document.getElementById('storeFilter').value = 'SVE';
+    
+    applyFilters();
+}
+
+function applyFilters() {
+    document.querySelectorAll('.product-item').forEach(item => {
+        let show = true;
+        
+        if (showingStockpileOnly && item.dataset.stockpile !== 'true') {
+            show = false;
+        }
+        
+        if (currentCategoryFilter !== 'SVE' && item.dataset.category !== currentCategoryFilter) {
+            show = false;
+        }
+        
+        if (currentStoreFilter !== 'SVE' && item.dataset.store !== currentStoreFilter.toLowerCase()) {
+            show = false;
+        }
+        
+        item.style.display = show ? '' : 'none';
+    });
+    
+    document.querySelectorAll('.store-section').forEach(section => {
+        const visibleProducts = Array.from(section.querySelectorAll('.product-item'))
+            .filter(item => item.style.display !== 'none');
+        section.classList.toggle('hidden', visibleProducts.length === 0);
+    });
+    
+    updateCategoryCounts();
+}
+
+function toggleCheck(el) {
+    el.classList.toggle('checked');
+    el.closest('.product-item').classList.toggle('checked');
+    updateCount();
+    updateCategoryCounts();
+}
+
+function updateCount() {
+    document.getElementById('checkedCount').textContent = 
+        document.querySelectorAll('.product-checkbox.checked').length;
+}
+
+function updateCategoryCounts() {
+    const checked = document.querySelectorAll('.product-checkbox.checked');
+    const counts = {'SVE':0,'MESO':0,'MLIJEČNO':0,'NAPICI':0,'HIGIJENA':0,'OSNOVNE_NAMIRNICE':0,'VOĆE_POVRĆE':0,'OSTALO':0};
+    
+    checked.forEach(item => {
+        const cat = item.closest('.product-item').dataset.category;
+        counts[cat]++;
+        counts['SVE']++;
+    });
+    
+    for (const [cat, count] of Object.entries(counts)) {
+        const chip = document.querySelector(`.cat-chip[data-category="${cat}"]`);
+        if (chip) {
+            const countEl = chip.querySelector('.chip-count');
+            if (count > 0) {
+                countEl.style.background = 'rgba(255,215,0,0.4)';
+            } else {
+                countEl.style.background = '';
+            }
+        }
+    }
+}
+
+function toggleFilter() {
+    const btn = event.target.closest('.btn');
+    const filtered = btn.dataset.filtered === 'true';
+    
+    if (filtered) {
+        document.querySelectorAll('.product-item').forEach(p => p.style.display = '');
+        document.querySelectorAll('.store-section').forEach(s => s.classList.remove('hidden'));
+        btn.innerHTML = '✓ ZA KUPITI <span class="count" id="checkedCount">' + 
+            document.querySelectorAll('.product-checkbox.checked').length + '</span>';
+        btn.dataset.filtered = 'false';
+        showingStockpileOnly = false;
+        currentCategoryFilter = 'SVE';
+        currentStoreFilter = 'SVE';
+        document.getElementById('storeFilter').value = 'SVE';
+        document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));
+        document.querySelector('.cat-chip[data-category="SVE"]').classList.add('active');
+    } else {
+        document.querySelectorAll('.product-item').forEach(p => {
+            const isChecked = p.querySelector('.product-checkbox.checked');
+            p.style.display = isChecked ? '' : 'none';
+        });
+        
+        document.querySelectorAll('.store-section').forEach(s => {
+            const hasChecked = Array.from(s.querySelectorAll('.product-item'))
+                .some(p => p.style.display !== 'none');
+            s.classList.toggle('hidden', !hasChecked);
+        });
+        
+        btn.innerHTML = '👁 PRIKAŽI SVE';
+        btn.dataset.filtered = 'true';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    generateHTML();
+});
 </script>
-</div></body></html>
+</body>
+</html>
