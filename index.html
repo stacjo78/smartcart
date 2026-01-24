@@ -68,6 +68,14 @@ body{font-family:-apple-system,sans-serif;background:linear-gradient(135deg,#667
 .badge.category{background:#f3e8ff;color:#7c3aed}
 .badge.stockpile{background:#dcfce7;color:#16a34a;font-weight:700}
 .badge.fake-sale{background:#fef3c7;color:#d97706;font-weight:700}
+.selected-stats{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:12px;padding:15px;margin-top:15px;display:none}
+.selected-stats.visible{display:block}
+.selected-stats-row{display:flex;justify-content:space-around;text-align:center;color:#fff}
+.selected-stat{flex:1}
+.selected-stat .val{font-size:20px;font-weight:700}
+.selected-stat .val.cost{color:#f39c12}
+.selected-stat .val.savings{color:#2ecc71}
+.selected-stat .lbl{font-size:11px;opacity:.8;margin-top:2px}
 .product-dates{font-size:11px;color:#64748b;margin-top:4px}
 .stockpile-info{background:#dcfce7;border-left:3px solid#22c55e;padding:6px 10px;margin-top:6px;border-radius:6px;font-size:12px;color:#15803d;font-weight:600}
 .product-price{text-align:right;flex-shrink:0}
@@ -101,6 +109,22 @@ body{font-family:-apple-system,sans-serif;background:linear-gradient(135deg,#667
 <div class="stat-card">
 <div class="stat-val">5</div>
 <div class="stat-lbl">Trgovina</div>
+</div>
+</div>
+</div>
+<div class="selected-stats" id="selectedStats">
+<div class="selected-stats-row">
+<div class="selected-stat">
+<div class="val" id="selectedCount">0</div>
+<div class="lbl">✅ Odabrano</div>
+</div>
+<div class="selected-stat">
+<div class="val cost" id="selectedCost">0.00€</div>
+<div class="lbl">💰 Trošak</div>
+</div>
+<div class="selected-stat">
+<div class="val savings" id="selectedSavings">0.00€</div>
+<div class="lbl">💚 Ušteda</div>
 </div>
 </div>
 </div>
@@ -198,7 +222,29 @@ function filterCategory(category) {currentCategoryFilter = category;showingStock
 function filterStore(store) {currentStoreFilter = store;applyFilters();}
 function showStockpile() {showingStockpileOnly = true;currentCategoryFilter = 'SVE';currentStoreFilter = 'SVE';document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));document.querySelector('.cat-chip[data-category="SVE"]').classList.add('active');document.getElementById('storeFilter').value = 'SVE';applyFilters();}
 function applyFilters() {document.querySelectorAll('.product-item').forEach(item => {let show = true;if (showingStockpileOnly && item.dataset.stockpile !== 'true') {show = false;}if (currentCategoryFilter !== 'SVE' && item.dataset.category !== currentCategoryFilter) {show = false;}if (currentStoreFilter !== 'SVE' && item.dataset.store !== currentStoreFilter.toLowerCase()) {show = false;}item.style.display = show ? '' : 'none';});document.querySelectorAll('.store-section').forEach(section => {const visibleProducts = Array.from(section.querySelectorAll('.product-item')).filter(item => item.style.display !== 'none');section.classList.toggle('hidden', visibleProducts.length === 0);});updateCategoryCounts();}
-function toggleCheck(el) {el.classList.toggle('checked');el.closest('.product-item').classList.toggle('checked');updateCount();updateCategoryCounts();}
+function toggleCheck(el) {el.classList.toggle('checked');el.closest('.product-item').classList.toggle('checked');updateCount();updateCategoryCounts();updateSelectedStats();}
+function updateSelectedStats() {
+const checkedItems = document.querySelectorAll('.product-checkbox.checked');
+const statsDiv = document.getElementById('selectedStats');
+if (checkedItems.length === 0) {statsDiv.classList.remove('visible');return;}
+statsDiv.classList.add('visible');
+let totalCost = 0;
+let totalSavings = 0;
+checkedItems.forEach(cb => {
+const item = cb.closest('.product-item');
+const id = item.dataset.id;
+const [store, idx] = [id.substring(0, id.lastIndexOf('-')), parseInt(id.substring(id.lastIndexOf('-')+1))];
+const storeData = DEMO_DATA[Object.keys(DEMO_DATA).find(k => k.toLowerCase() === store.toLowerCase())];
+if (storeData && storeData[idx]) {
+const p = storeData[idx];
+totalCost += p.action_price;
+if (p.regular_price && p.regular_price > p.action_price) {totalSavings += (p.regular_price - p.action_price);}
+}
+});
+document.getElementById('selectedCount').textContent = checkedItems.length;
+document.getElementById('selectedCost').textContent = totalCost.toFixed(2) + '€';
+document.getElementById('selectedSavings').textContent = totalSavings.toFixed(2) + '€';
+}
 function updateCount() {document.getElementById('checkedCount').textContent = document.querySelectorAll('.product-checkbox.checked').length;}
 function updateCategoryCounts() {const checked = document.querySelectorAll('.product-checkbox.checked');const counts = {'SVE':0,'MESO':0,'MLIJEČNO':0,'NAPICI':0,'HIGIJENA':0,'OSNOVNE_NAMIRNICE':0,'VOĆE_POVRĆE':0,'OSTALO':0};checked.forEach(item => {const cat = item.closest('.product-item').dataset.category;counts[cat]++;counts['SVE']++;});for (const [cat, count] of Object.entries(counts)) {const chip = document.querySelector(`.cat-chip[data-category="${cat}"]`);if (chip) {const countEl = chip.querySelector('.chip-count');if (count > 0) {countEl.style.background = 'rgba(255,215,0,0.4)';} else {countEl.style.background = '';}}}}
 function toggleFilter() {const btn = event.target.closest('.btn');const filtered = btn.dataset.filtered === 'true';if (filtered) {document.querySelectorAll('.product-item').forEach(p => p.style.display = '');document.querySelectorAll('.store-section').forEach(s => s.classList.remove('hidden'));btn.innerHTML = '✓ ZA KUPITI <span class="count" id="checkedCount">' + document.querySelectorAll('.product-checkbox.checked').length + '</span>';btn.dataset.filtered = 'false';showingStockpileOnly = false;currentCategoryFilter = 'SVE';currentStoreFilter = 'SVE';document.getElementById('storeFilter').value = 'SVE';document.querySelectorAll('.cat-chip').forEach(chip => chip.classList.remove('active'));document.querySelector('.cat-chip[data-category="SVE"]').classList.add('active');} else {document.querySelectorAll('.product-item').forEach(p => {const isChecked = p.querySelector('.product-checkbox.checked');p.style.display = isChecked ? '' : 'none';});document.querySelectorAll('.store-section').forEach(s => {const hasChecked = Array.from(s.querySelectorAll('.product-item')).some(p => p.style.display !== 'none');s.classList.toggle('hidden', !hasChecked);});btn.innerHTML = '👁 PRIKAŽI SVE';btn.dataset.filtered = 'true';}}
